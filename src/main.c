@@ -593,6 +593,14 @@ int main() {
                 INCR(1);
             }
 
+                        case 0xE6: { // AND n
+                uint8_t value = cpu.memory[cpu.pc + 1];
+                cpu.registers.a &= value;
+                int z = (cpu.registers.a == 0);
+                cpu.registers.f = (z << 7) | (1 << 5);
+                INCR(2);
+            }
+
             // MAIN OPCODES
         }
     }
