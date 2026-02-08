@@ -666,6 +666,11 @@ int main() {
                 INCR(1);
             }
 
+                        case 0xF5: { // PUSH AF
+                stack_push16(&cpu, cpu.registers.af);
+                INCR(1);
+            }
+
             // MAIN OPCODES
         }
     }
