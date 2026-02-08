@@ -472,6 +472,7 @@ int main() {
                         case 0xBA: cpu_cp(&cpu, cpu.registers.d); INCR(1); // CP D
                         case 0xBB: cpu_cp(&cpu, cpu.registers.e); INCR(1); // CP E
                         case 0xBC: cpu_cp(&cpu, cpu.registers.h); INCR(1); // CP H
+                        case 0xBD: cpu_cp(&cpu, cpu.registers.l); INCR(1); // CP L
             // MAIN OPCODES
         }
     }
