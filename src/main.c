@@ -105,6 +105,10 @@ int main() {
 
                         OP_LD_16(0x11, de) // LD DE, u16
 
+                        case 0x12: { // LD (DE), A
+                cpu.memory[cpu.registers.de] = cpu.registers.a;
+                INCR(1);
+            }
             // MAIN OPCODES
         }
     }
