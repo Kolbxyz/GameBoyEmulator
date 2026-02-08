@@ -113,6 +113,8 @@ int main() {
                 cpu.registers.de++;
                 INCR(1);
             }
+                        case 0x14: cpu_inc(&cpu, &cpu.registers.d); INCR(1); // INC D
+
             // MAIN OPCODES
         }
     }
