@@ -662,6 +662,10 @@ int main() {
                 INCR(1);
             }
 
+                        case 0xF3: { // DI
+                INCR(1);
+            }
+
             // MAIN OPCODES
         }
     }
