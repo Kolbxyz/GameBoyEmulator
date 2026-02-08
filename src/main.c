@@ -276,6 +276,8 @@ int main() {
                 INCR(1);
             }
 
+                        case 0x3B: cpu.sp--; INCR(1); // DEC SP
+
             // MAIN OPCODES
         }
     }
