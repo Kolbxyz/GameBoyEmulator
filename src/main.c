@@ -410,6 +410,11 @@ int main() {
                         case 0x9B: cpu_sbc(&cpu, cpu.registers.e); INCR(1); // SBC A, E
                         case 0x9C: cpu_sbc(&cpu, cpu.registers.h); INCR(1); // SBC A, H
                         case 0x9D: cpu_sbc(&cpu, cpu.registers.l); INCR(1); // SBC A, L
+                        case 0x9E: { // SBC A, (HL)
+                uint8_t val = cpu.memory[cpu.registers.hl];
+                cpu_sbc(&cpu, val);
+                INCR(1);
+            }
             // MAIN OPCODES
         }
     }
