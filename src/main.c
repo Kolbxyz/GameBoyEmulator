@@ -131,6 +131,11 @@ int main() {
                 INCR(1);
             }
 
+                        case 0x19: { // ADD HL, DE
+                cpu_add_hl(&cpu, cpu.registers.de);
+                INCR(1);
+            }
+
             // MAIN OPCODES
         }
     }
