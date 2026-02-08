@@ -168,6 +168,8 @@ int main() {
                 break;
             }
 
+                        OP_LD_16(0x21, hl) // LD HL, u16
+
             // MAIN OPCODES
         }
     }
