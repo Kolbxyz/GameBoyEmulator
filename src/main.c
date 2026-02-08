@@ -473,6 +473,11 @@ int main() {
                         case 0xBB: cpu_cp(&cpu, cpu.registers.e); INCR(1); // CP E
                         case 0xBC: cpu_cp(&cpu, cpu.registers.h); INCR(1); // CP H
                         case 0xBD: cpu_cp(&cpu, cpu.registers.l); INCR(1); // CP L
+                        case 0xBE: { // CP (HL)
+                uint8_t val = cpu.memory[cpu.registers.hl];
+                cpu_cp(&cpu, val);
+                INCR(1);
+            }
             // MAIN OPCODES
         }
     }
