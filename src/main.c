@@ -438,6 +438,11 @@ int main() {
                         case 0xAB: cpu_xor(&cpu, cpu.registers.e); INCR(1);
                         case 0xAC: cpu_xor(&cpu, cpu.registers.h); INCR(1);
                         case 0xAD: cpu_xor(&cpu, cpu.registers.l); INCR(1);
+                        case 0xAE: { // XOR (HL)
+                uint8_t val = cpu.memory[cpu.registers.hl];
+                cpu_xor(&cpu, val);
+                INCR(1);
+            }
             // MAIN OPCODES
         }
     }
