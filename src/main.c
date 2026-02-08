@@ -210,6 +210,11 @@ int main() {
                 INCR(1);
             }
 
+                        case 0x2A: { // LD A, (HL+)
+                cpu.registers.a = cpu.memory[cpu.registers.hl++];
+                INCR(1);
+            }
+
             // MAIN OPCODES
         }
     }
