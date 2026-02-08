@@ -407,6 +407,7 @@ int main() {
                         case 0x98: cpu_sbc(&cpu, cpu.registers.b); INCR(1); // SBC A, B
                         case 0x99: cpu_sbc(&cpu, cpu.registers.c); INCR(1); // SBC A, C
                         case 0x9A: cpu_sbc(&cpu, cpu.registers.d); INCR(1); // SBC A, D
+                        case 0x9B: cpu_sbc(&cpu, cpu.registers.e); INCR(1); // SBC A, E
             // MAIN OPCODES
         }
     }
