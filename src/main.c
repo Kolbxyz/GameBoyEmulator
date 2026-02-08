@@ -623,6 +623,12 @@ int main() {
                 break;
             }
 
+                        case 0xEA: { // LD (nn), A
+                uint16_t addr = read_16(&cpu, cpu.pc + 1);
+                cpu.memory[addr] = cpu.registers.a;
+                INCR(3);
+            }
+
             // MAIN OPCODES
         }
     }
