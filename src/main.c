@@ -508,6 +508,11 @@ int main() {
                 break;
             }
 
+                        case 0xC9: { // RET
+                cpu.pc = stack_pop16(&cpu);
+                break;
+            }
+
             // MAIN OPCODES
         }
     }
