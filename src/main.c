@@ -215,6 +215,8 @@ int main() {
                 INCR(1);
             }
 
+                        case 0x2B: cpu.registers.hl--; INCR(1); // DEC HL - Manquait !
+
             // MAIN OPCODES
         }
     }
