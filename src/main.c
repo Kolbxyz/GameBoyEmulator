@@ -618,6 +618,11 @@ int main() {
                 INCR(2);
             }
 
+                        case 0xE9: { // JP HL
+                cpu.pc = cpu.registers.hl;
+                break;
+            }
+
             // MAIN OPCODES
         }
     }
