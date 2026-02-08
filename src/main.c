@@ -526,6 +526,12 @@ int main() {
                 break;
             }
 
+                        case 0xCE: { // ADC A, u8 (Immediate)
+                uint8_t val = cpu.memory[cpu.pc + 1];
+                cpu_adc(&cpu, val);
+                INCR(2);
+            }
+
             // MAIN OPCODES
         }
     }
