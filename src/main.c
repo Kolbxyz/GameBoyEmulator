@@ -693,6 +693,11 @@ int main() {
                 INCR(2);
             }
 
+                        case 0xF9: { // LD SP, HL
+                cpu.sp = cpu.registers.hl;
+                INCR(1);
+            }
+
             // MAIN OPCODES
         }
     }
