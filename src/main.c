@@ -502,6 +502,12 @@ int main() {
                 INCR(2);
             }
 
+                        case 0xC7: { // RST 00H
+                stack_push16(&cpu, cpu.pc + 1);
+                cpu.pc = 0x0000;
+                break;
+            }
+
             // MAIN OPCODES
         }
     }
