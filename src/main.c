@@ -683,6 +683,16 @@ int main() {
                 break;
             }
 
+                        case 0xF8: { // LD HL, SP+r8
+                int8_t offset = (int8_t)cpu.memory[cpu.pc + 1];
+                uint16_t val = cpu.sp + offset;
+                int h = ((cpu.sp & 0xF) + (offset & 0xF)) > 0xF;
+                int c = ((cpu.sp & 0xFF) + (offset & 0xFF)) > 0xFF;
+                cpu.registers.f = (0 << 7) | (0 << 6) | (h << 5) | (c << 4);
+                cpu.registers.hl = val;
+                INCR(2);
+            }
+
             // MAIN OPCODES
         }
     }
