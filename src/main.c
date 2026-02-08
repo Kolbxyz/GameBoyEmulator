@@ -180,6 +180,8 @@ int main() {
                 INCR(1);
             }
 
+                        case 0x24: cpu_inc(&cpu, &cpu.registers.h); INCR(1); // INC H
+
             // MAIN OPCODES
         }
     }
