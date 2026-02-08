@@ -657,6 +657,11 @@ int main() {
                 INCR(1);
             }
 
+                        case 0xF2: { // LD A, (C)
+                cpu.registers.a = cpu.memory[0xFF00 + cpu.registers.c];
+                INCR(1);
+            }
+
             // MAIN OPCODES
         }
     }
