@@ -698,6 +698,12 @@ int main() {
                 INCR(1);
             }
 
+                        case 0xFA: { // LD A, (nn)
+                uint16_t addr = read_16(&cpu, cpu.pc + 1);
+                cpu.registers.a = cpu.memory[addr];
+                INCR(3);
+            }
+
             // MAIN OPCODES
         }
     }
