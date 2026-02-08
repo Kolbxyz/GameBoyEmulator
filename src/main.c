@@ -588,6 +588,11 @@ int main() {
                 INCR(1);
             }
 
+                        case 0xE5: { // PUSH HL
+                stack_push16(&cpu, cpu.registers.hl);
+                INCR(1);
+            }
+
             // MAIN OPCODES
         }
     }
