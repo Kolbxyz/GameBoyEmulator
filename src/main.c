@@ -36,6 +36,8 @@ int main() {
         opcode = cpu.memory[cpu.pc];
         // printf("> [%d](%#4x) %#4x\n", counter, cpu.pc, opcode); // Commenté pour alléger le log si besoin
         switch (opcode) {
+                        case 0x00: INCR(1); // NOP
+
             // MAIN OPCODES
         }
     }
