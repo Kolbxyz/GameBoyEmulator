@@ -91,6 +91,14 @@ int main() {
 
                         OP_LD_8(0x0E, c) // LD C, u8
 
+                        case 0x0F: { // RRCA (Rotate Right Circular Accumulator)
+                uint8_t a = cpu.registers.a;
+                uint8_t carry = (a & 1);
+                cpu.registers.a = (a >> 1) | (carry << 7);
+                cpu.registers.f = (0 << 7) | (0 << 6) | (0 << 5) | (carry << 4);
+                INCR(1);
+            }
+
             // MAIN OPCODES
         }
     }
