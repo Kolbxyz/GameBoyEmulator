@@ -242,6 +242,11 @@ int main() {
                 INCR(1);
             }
 
+                        case 0x33: { // INC SP
+                cpu.sp++;
+                INCR(1);
+            }
+
             // MAIN OPCODES
         }
     }
