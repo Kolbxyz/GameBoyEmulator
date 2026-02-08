@@ -99,6 +99,10 @@ int main() {
                 INCR(1);
             }
 
+                        case 0x10: { // STOP
+                INCR(2);
+            }
+
             // MAIN OPCODES
         }
     }
