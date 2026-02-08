@@ -83,6 +83,7 @@ int main() {
                 INCR(1);
             }
 
+                        case 0x0C: cpu_inc(&cpu, &cpu.registers.c); INCR(1); // INC C
             // MAIN OPCODES
         }
     }
