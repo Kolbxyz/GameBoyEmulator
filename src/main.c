@@ -450,6 +450,7 @@ int main() {
             }
 
             // --- OR A, r ---
+                        case 0xB0: cpu_or(&cpu, cpu.registers.b); INCR(1);
             // MAIN OPCODES
         }
     }
