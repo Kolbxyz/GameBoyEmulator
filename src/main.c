@@ -709,6 +709,17 @@ int main() {
                 INCR(1);
             }
 
+                        case 0xFE: { // CP n
+                uint8_t value = cpu.memory[cpu.pc + 1];
+                uint8_t a = cpu.registers.a;
+                int z = (a == value);
+                int n = 1;
+                int h = ((a & 0x0F) < (value & 0x0F));
+                int c = (a < value);
+                cpu.registers.f = (z << 7) | (n << 6) | (h << 5) | (c << 4);
+                INCR(2);
+            }
+
             // MAIN OPCODES
         }
     }
