@@ -435,6 +435,7 @@ int main() {
                         case 0xA8: cpu_xor(&cpu, cpu.registers.b); INCR(1);
                         case 0xA9: cpu_xor(&cpu, cpu.registers.c); INCR(1);
                         case 0xAA: cpu_xor(&cpu, cpu.registers.d); INCR(1);
+                        case 0xAB: cpu_xor(&cpu, cpu.registers.e); INCR(1);
             // MAIN OPCODES
         }
     }
