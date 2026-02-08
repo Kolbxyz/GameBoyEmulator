@@ -40,6 +40,11 @@ int main() {
 
                         OP_LD_16(0x01, bc) // LD BC, u16
 
+                        case 0x02: { // LD (BC), A
+                cpu.memory[cpu.registers.bc] = cpu.registers.a;
+                INCR(1);
+            }
+
             // MAIN OPCODES
         }
     }
