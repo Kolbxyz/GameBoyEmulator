@@ -175,6 +175,11 @@ int main() {
                 INCR(1);
             }
 
+                        case 0x23: { // INC HL
+                cpu.registers.hl++;
+                INCR(1);
+            }
+
             // MAIN OPCODES
         }
     }
