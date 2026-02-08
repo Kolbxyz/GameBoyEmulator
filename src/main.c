@@ -404,6 +404,7 @@ int main() {
                         case 0x97: cpu_sub(&cpu, cpu.registers.a); INCR(1); // SUB A
 
             // --- SBC A, r (Subtract with Carry) ---
+                        case 0x98: cpu_sbc(&cpu, cpu.registers.b); INCR(1); // SBC A, B
             // MAIN OPCODES
         }
     }
