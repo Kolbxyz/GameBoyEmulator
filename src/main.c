@@ -578,6 +578,11 @@ int main() {
                 INCR(2);
             }
 
+                        case 0xE1: { // POP HL
+                cpu.registers.hl = stack_pop16(&cpu);
+                INCR(1);
+            }
+
             // MAIN OPCODES
         }
     }
