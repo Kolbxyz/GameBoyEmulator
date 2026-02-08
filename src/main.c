@@ -159,6 +159,15 @@ int main() {
                 INCR(1);
             }
 
+                        case 0x20: { // JR NZ, r8
+                int8_t offset = (int8_t)cpu.memory[cpu.pc + 1];
+                cpu.pc += 2;
+                if (!(cpu.registers.f & 0x80)) {
+                    cpu.pc += offset;
+                }
+                break;
+            }
+
             // MAIN OPCODES
         }
     }
