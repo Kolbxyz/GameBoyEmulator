@@ -635,6 +635,12 @@ int main() {
                 INCR(2);
             }
 
+                        case 0xEF: { // RST 28H
+                stack_push16(&cpu, cpu.pc + 1);
+                cpu.pc = 0x0028;
+                break;
+            }
+
             // MAIN OPCODES
         }
     }
