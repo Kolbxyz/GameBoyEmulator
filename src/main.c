@@ -485,6 +485,12 @@ int main() {
                 INCR(1);
             }
 
+                        case 0xC3: { // JP a16
+                uint16_t destination = read_16(&cpu, cpu.pc + 1);
+                cpu.pc = destination;
+                break;
+            }
+
             // MAIN OPCODES
         }
     }
