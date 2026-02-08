@@ -543,6 +543,11 @@ int main() {
                 INCR(1);
             }
 
+                        case 0xD5: { // PUSH DE
+                stack_push16(&cpu, cpu.registers.de);
+                INCR(1);
+            }
+
             // MAIN OPCODES
         }
     }
