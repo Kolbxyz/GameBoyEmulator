@@ -141,6 +141,7 @@ int main() {
                 INCR(1);
             }
 
+                        case 0x1B: cpu.registers.de--; INCR(1); // DEC DE - Manquait !
             // MAIN OPCODES
         }
     }
