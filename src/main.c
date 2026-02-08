@@ -68,6 +68,11 @@ int main() {
                 INCR(1);
             }
 
+                        case 0x09: { // ADD HL, BC
+                cpu_add_hl(&cpu, cpu.registers.bc);
+                INCR(1);
+            }
+
             // MAIN OPCODES
         }
     }
