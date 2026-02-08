@@ -393,6 +393,7 @@ int main() {
                         case 0x90: cpu_sub(&cpu, cpu.registers.b); INCR(1); // SUB B
                         case 0x91: cpu_sub(&cpu, cpu.registers.c); INCR(1); // SUB C
                         case 0x92: cpu_sub(&cpu, cpu.registers.d); INCR(1); // SUB D
+                        case 0x93: cpu_sub(&cpu, cpu.registers.e); INCR(1); // SUB E
             // MAIN OPCODES
         }
     }
