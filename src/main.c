@@ -651,6 +651,12 @@ int main() {
                 INCR(2);
             }
 
+                        case 0xF1: { // POP AF
+                uint16_t af = stack_pop16(&cpu);
+                cpu.registers.af = af & 0xFFF0;
+                INCR(1);
+            }
+
             // MAIN OPCODES
         }
     }
