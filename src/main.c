@@ -548,6 +548,12 @@ int main() {
                 INCR(1);
             }
 
+                        case 0xD6: { // SUB n (Immediate)
+                uint8_t val = cpu.memory[cpu.pc + 1];
+                cpu_sub(&cpu, val);
+                INCR(2);
+            }
+
             // MAIN OPCODES
         }
     }
