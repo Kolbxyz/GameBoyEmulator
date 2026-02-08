@@ -19,7 +19,7 @@ void execute_cb_instruction(cpu_t *cpu, uint8_t opcode)
             cpu->registers.f = (cpu->registers.b == 0) ? 0x80 : 0x00;
             break;
         
-            // CB OPCODES
+            
     }
 }
 
@@ -720,7 +720,9 @@ int main() {
                 INCR(2);
             }
 
-            // MAIN OPCODES
+            default:
+                printf("[!] Unknown : 0x%02X addr 0x%04X\n", opcode, cpu.pc);
+                exit(UNKNOWN_OPCODE);
         }
     }
     return SUCCESS;
