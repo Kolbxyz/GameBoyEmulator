@@ -459,6 +459,11 @@ int main() {
                         case 0xB3: cpu_or(&cpu, cpu.registers.e); INCR(1);
                         case 0xB4: cpu_or(&cpu, cpu.registers.h); INCR(1);
                         case 0xB5: cpu_or(&cpu, cpu.registers.l); INCR(1);
+                        case 0xB6: { // OR (HL)
+                uint8_t val = cpu.memory[cpu.registers.hl];
+                cpu_or(&cpu, val);
+                INCR(1);
+            }
             // MAIN OPCODES
         }
     }
