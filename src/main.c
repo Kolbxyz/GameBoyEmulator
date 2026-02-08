@@ -283,6 +283,7 @@ int main() {
                         OP_LD_8(0x3E, b) // LD A, u8
 
             // --- LD B, r ---
+                        case 0x40: cpu.registers.b = cpu.registers.b; INCR(1); // LD B, B
             // MAIN OPCODES
         }
     }
