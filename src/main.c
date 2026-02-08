@@ -53,6 +53,11 @@ int main() {
             // --- INC r (Increment 8-bit) ---
                         case 0x04: cpu_inc(&cpu, &cpu.registers.b); INCR(1); // INC B
 
+                        case 0x05: { // DEC B
+                cpu_dec(&cpu, &cpu.registers.b);
+                INCR(1);
+            }
+
             // MAIN OPCODES
         }
     }
