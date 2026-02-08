@@ -464,6 +464,9 @@ int main() {
                 cpu_or(&cpu, val);
                 INCR(1);
             }
+                        case 0xB7: cpu_or(&cpu, cpu.registers.a); INCR(1);
+
+            // --- CP A, r (Compare) ---
             // MAIN OPCODES
         }
     }
