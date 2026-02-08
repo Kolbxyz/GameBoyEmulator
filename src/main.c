@@ -89,6 +89,8 @@ int main() {
                 INCR(1);
             }
 
+                        OP_LD_8(0x0E, c) // LD C, u8
+
             // MAIN OPCODES
         }
     }
