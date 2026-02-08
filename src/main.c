@@ -78,6 +78,11 @@ int main() {
                 INCR(1);
             }
 
+                        case 0x0B: { // DEC BC
+                cpu.registers.bc--;
+                INCR(1);
+            }
+
             // MAIN OPCODES
         }
     }
