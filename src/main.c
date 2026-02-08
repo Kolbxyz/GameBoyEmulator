@@ -205,6 +205,11 @@ int main() {
                 INCR(1);
             }
 
+                        case 0x29: { // ADD HL, HL
+                cpu_add_hl(&cpu, cpu.registers.hl);
+                INCR(1);
+            }
+
             // MAIN OPCODES
         }
     }
