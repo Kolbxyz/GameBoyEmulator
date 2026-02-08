@@ -538,6 +538,11 @@ int main() {
                 break;
             }
 
+                        case 0xD1: { // POP DE
+                cpu.registers.de = stack_pop16(&cpu);
+                INCR(1);
+            }
+
             // MAIN OPCODES
         }
     }
