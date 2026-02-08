@@ -572,6 +572,12 @@ int main() {
                 break;
             }
 
+                        case 0xE0: { // LDH (n), A
+                uint8_t offset = cpu.memory[cpu.pc + 1];
+                cpu.memory[0xFF00 + offset] = cpu.registers.a;
+                INCR(2);
+            }
+
             // MAIN OPCODES
         }
     }
