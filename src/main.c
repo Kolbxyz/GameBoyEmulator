@@ -58,6 +58,8 @@ int main() {
                 INCR(1);
             }
 
+                        OP_LD_8(0x06, b) // LD B, u8
+
             // MAIN OPCODES
         }
     }
