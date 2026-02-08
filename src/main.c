@@ -704,6 +704,11 @@ int main() {
                 INCR(3);
             }
 
+                        case 0xFB: { // EI
+                cpu.ime_scheduled = 1;
+                INCR(1);
+            }
+
             // MAIN OPCODES
         }
     }
