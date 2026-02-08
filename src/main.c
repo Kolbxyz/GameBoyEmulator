@@ -455,6 +455,7 @@ int main() {
                 cpu_or(&cpu, cpu.registers.c); 
                 INCR(1);
             }
+                        case 0xB2: cpu_or(&cpu, cpu.registers.d); INCR(1);
             // MAIN OPCODES
         }
     }
