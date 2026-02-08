@@ -423,6 +423,7 @@ int main() {
                         case 0xA2: cpu_and(&cpu, cpu.registers.d); INCR(1);
                         case 0xA3: cpu_and(&cpu, cpu.registers.e); INCR(1);
                         case 0xA4: cpu_and(&cpu, cpu.registers.h); INCR(1);
+                        case 0xA5: cpu_and(&cpu, cpu.registers.l); INCR(1);
             // MAIN OPCODES
         }
     }
