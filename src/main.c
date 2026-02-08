@@ -390,6 +390,7 @@ int main() {
                         case 0x8F: cpu_adc(&cpu, cpu.registers.a); INCR(1);
 
             // --- SUB A, r (Subtract) ---
+                        case 0x90: cpu_sub(&cpu, cpu.registers.b); INCR(1); // SUB B
             // MAIN OPCODES
         }
     }
