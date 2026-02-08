@@ -219,6 +219,8 @@ int main() {
 
                         case 0x2C: cpu_inc(&cpu, &cpu.registers.l); INCR(1); // INC L
 
+                        case 0x2D: cpu_dec(&cpu, &cpu.registers.l); INCR(1); // DEC L
+
             // MAIN OPCODES
         }
     }
