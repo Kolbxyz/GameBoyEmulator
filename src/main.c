@@ -247,6 +247,16 @@ int main() {
                 INCR(1);
             }
 
+                        case 0x34: { // INC (HL)
+                uint8_t val = cpu.memory[cpu.registers.hl] + 1;
+                int z = (val == 0);
+                int h = ((val & 0x0F) == 0x00);
+                int current_c = (cpu.registers.f & FLAG_C) ? 1 : 0;
+                cpu.memory[cpu.registers.hl] = val;
+                cpu.registers.f = (z << 7) | (0 << 6) | (h << 5) | (current_c << 4);
+                INCR(1);
+            }
+
             // MAIN OPCODES
         }
     }
