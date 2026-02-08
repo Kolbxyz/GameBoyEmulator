@@ -415,6 +415,9 @@ int main() {
                 cpu_sbc(&cpu, val);
                 INCR(1);
             }
+                        case 0x9F: cpu_sbc(&cpu, cpu.registers.a); INCR(1); // SBC A, A
+
+            // --- AND A, r ---
             // MAIN OPCODES
         }
     }
