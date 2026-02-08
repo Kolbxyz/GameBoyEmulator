@@ -480,6 +480,11 @@ int main() {
             }
                         case 0xBF: cpu_cp(&cpu, cpu.registers.a); INCR(1); // CP A
 
+                        case 0xC1: { // POP BC
+                cpu.registers.bc = stack_pop16(&cpu);
+                INCR(1);
+            }
+
             // MAIN OPCODES
         }
     }
