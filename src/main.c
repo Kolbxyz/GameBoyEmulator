@@ -478,6 +478,8 @@ int main() {
                 cpu_cp(&cpu, val);
                 INCR(1);
             }
+                        case 0xBF: cpu_cp(&cpu, cpu.registers.a); INCR(1); // CP A
+
             // MAIN OPCODES
         }
     }
