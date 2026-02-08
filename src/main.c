@@ -333,6 +333,7 @@ int main() {
                         case 0x67: cpu.registers.h = cpu.registers.a; INCR(1); // LD H, A
 
             // --- LD L, r ---
+                        case 0x68: cpu.registers.l = cpu.registers.b; INCR(1); // LD L, B
             // MAIN OPCODES
         }
     }
