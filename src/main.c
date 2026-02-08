@@ -381,6 +381,7 @@ int main() {
                         case 0x8A: cpu_adc(&cpu, cpu.registers.d); INCR(1); // ADC A, D
                         case 0x8B: cpu_adc(&cpu, cpu.registers.e); INCR(1); // ADC A, E
                         case 0x8C: cpu_adc(&cpu, cpu.registers.h); INCR(1); // ADC A, H
+                        case 0x8D: cpu_adc(&cpu, cpu.registers.l); INCR(1); // ADC A, L
             // MAIN OPCODES
         }
     }
