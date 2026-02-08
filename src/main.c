@@ -217,6 +217,8 @@ int main() {
 
                         case 0x2B: cpu.registers.hl--; INCR(1); // DEC HL - Manquait !
 
+                        case 0x2C: cpu_inc(&cpu, &cpu.registers.l); INCR(1); // INC L
+
             // MAIN OPCODES
         }
     }
