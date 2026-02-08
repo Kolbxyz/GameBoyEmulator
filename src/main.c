@@ -232,6 +232,11 @@ int main() {
                 INCR(1);
             }
 
+                        case 0x31: { // LD SP, u16
+                cpu.sp = read_16(&cpu, cpu.pc + 1);
+                INCR(3);
+            }
+
             // MAIN OPCODES
         }
     }
