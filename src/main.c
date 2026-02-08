@@ -103,6 +103,8 @@ int main() {
                 INCR(2);
             }
 
+                        OP_LD_16(0x11, de) // LD DE, u16
+
             // MAIN OPCODES
         }
     }
