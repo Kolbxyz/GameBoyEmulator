@@ -150,6 +150,15 @@ int main() {
                 INCR(2);
             }
 
+                        case 0x1F: { // RRA (Rotate Right Accumulator through Carry) - Manquait !
+                uint8_t a = cpu.registers.a;
+                uint8_t old_c = (cpu.registers.f & FLAG_C) ? 1 : 0;
+                uint8_t new_c = (a & 1);
+                cpu.registers.a = (a >> 1) | (old_c << 7);
+                cpu.registers.f = (0 << 7) | (0 << 6) | (0 << 5) | (new_c << 4);
+                INCR(1);
+            }
+
             // MAIN OPCODES
         }
     }
