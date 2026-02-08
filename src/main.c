@@ -338,6 +338,7 @@ int main() {
                         case 0x6A: cpu.registers.l = cpu.registers.d; INCR(1); // LD L, D
                         case 0x6B: cpu.registers.l = cpu.registers.e; INCR(1); // LD L, E
                         case 0x6C: cpu.registers.l = cpu.registers.h; INCR(1); // LD L, H
+                        case 0x6D: cpu.registers.l = cpu.registers.l; INCR(1); // LD L, L
             // MAIN OPCODES
         }
     }
