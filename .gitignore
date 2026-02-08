@@ -1,0 +1,4 @@
+*.o
+emulator
+.cache/
+compile_commands.json
