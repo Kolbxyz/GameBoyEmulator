@@ -671,6 +671,12 @@ int main() {
                 INCR(1);
             }
 
+                        case 0xF6: { // OR n (Immediate)
+                uint8_t val = cpu.memory[cpu.pc + 1];
+                cpu_or(&cpu, val);
+                INCR(2);
+            }
+
             // MAIN OPCODES
         }
     }
