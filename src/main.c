@@ -601,6 +601,12 @@ int main() {
                 INCR(2);
             }
 
+                        case 0xE7: { // RST 20H
+                stack_push16(&cpu, cpu.pc + 1);
+                cpu.pc = 0x0020;
+                break;
+            }
+
             // MAIN OPCODES
         }
     }
