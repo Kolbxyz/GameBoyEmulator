@@ -330,6 +330,9 @@ int main() {
                         case 0x64: cpu.registers.h = cpu.registers.h; INCR(1); // LD H, H
                         case 0x65: cpu.registers.h = cpu.registers.l; INCR(1); // LD H, L
                         case 0x66: cpu.registers.h = cpu.memory[cpu.registers.hl]; INCR(1); // LD H, (HL)
+                        case 0x67: cpu.registers.h = cpu.registers.a; INCR(1); // LD H, A
+
+            // --- LD L, r ---
             // MAIN OPCODES
         }
     }
