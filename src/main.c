@@ -45,6 +45,12 @@ int main() {
                 INCR(1);
             }
 
+                        case 0x03: { // INC BC
+                cpu.registers.bc++;
+                INCR(1);
+            }
+
+            // --- INC r (Increment 8-bit) ---
             // MAIN OPCODES
         }
     }
