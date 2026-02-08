@@ -266,6 +266,11 @@ int main() {
 
                         OP_LD_8(0x36, hl) // LD (HL), u8
 
+                        case 0x39: { // ADD HL, SP
+                cpu_add_hl(&cpu, cpu.sp);
+                INCR(1);
+            }
+
             // MAIN OPCODES
         }
     }
