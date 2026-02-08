@@ -443,6 +443,13 @@ int main() {
                 cpu_xor(&cpu, val);
                 INCR(1);
             }
+                        case 0xAF: { // XOR A
+                cpu.registers.a ^= cpu.registers.a;
+                cpu.registers.f = FLAG_Z;
+                INCR(1);
+            }
+
+            // --- OR A, r ---
             // MAIN OPCODES
         }
     }
