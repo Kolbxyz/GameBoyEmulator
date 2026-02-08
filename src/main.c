@@ -629,6 +629,12 @@ int main() {
                 INCR(3);
             }
 
+                        case 0xEE: { // XOR n (Immediate)
+                uint8_t val = cpu.memory[cpu.pc + 1];
+                cpu_xor(&cpu, val);
+                INCR(2);
+            }
+
             // MAIN OPCODES
         }
     }
