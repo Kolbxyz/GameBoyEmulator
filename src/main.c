@@ -38,6 +38,8 @@ int main() {
         switch (opcode) {
                         case 0x00: INCR(1); // NOP
 
+                        OP_LD_16(0x01, bc) // LD BC, u16
+
             // MAIN OPCODES
         }
     }
