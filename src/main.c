@@ -170,6 +170,11 @@ int main() {
 
                         OP_LD_16(0x21, hl) // LD HL, u16
 
+                        case 0x22: { // LD (HL+), A
+                cpu.memory[cpu.registers.hl++] = cpu.registers.a;
+                INCR(1);
+            }
+
             // MAIN OPCODES
         }
     }
