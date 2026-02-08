@@ -451,6 +451,10 @@ int main() {
 
             // --- OR A, r ---
                         case 0xB0: cpu_or(&cpu, cpu.registers.b); INCR(1);
+                        case 0xB1: { // OR A, C (Attention doublon B1) - Corrigé
+                cpu_or(&cpu, cpu.registers.c); 
+                INCR(1);
+            }
             // MAIN OPCODES
         }
     }
