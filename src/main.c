@@ -382,6 +382,11 @@ int main() {
                         case 0x8B: cpu_adc(&cpu, cpu.registers.e); INCR(1); // ADC A, E
                         case 0x8C: cpu_adc(&cpu, cpu.registers.h); INCR(1); // ADC A, H
                         case 0x8D: cpu_adc(&cpu, cpu.registers.l); INCR(1); // ADC A, L
+                        case 0x8E: { // ADC A, (HL)
+                uint8_t val = cpu.memory[cpu.registers.hl];
+                cpu_adc(&cpu, val);
+                INCR(1);
+            }
             // MAIN OPCODES
         }
     }
