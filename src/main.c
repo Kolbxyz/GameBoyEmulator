@@ -237,6 +237,11 @@ int main() {
                 INCR(3);
             }
 
+                        case 0x32: { // LD (HL-), A
+                cpu.memory[cpu.registers.hl--] = cpu.registers.a;
+                INCR(1);
+            }
+
             // MAIN OPCODES
         }
     }
