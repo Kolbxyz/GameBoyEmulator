@@ -367,6 +367,7 @@ int main() {
                         case 0x81: cpu_add(&cpu, cpu.registers.c); INCR(1); // ADD A, C
                         case 0x82: cpu_add(&cpu, cpu.registers.d); INCR(1); // ADD A, D
                         case 0x83: cpu_add(&cpu, cpu.registers.e); INCR(1); // ADD A, E
+                        case 0x84: cpu_add(&cpu, cpu.registers.h); INCR(1); // ADD A, H
             // MAIN OPCODES
         }
     }
