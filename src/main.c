@@ -519,6 +519,13 @@ int main() {
                 INCR(2);
             }
 
+                        case 0xCD: { // CALL a16
+                uint16_t target = read_16(&cpu, cpu.pc + 1);
+                stack_push16(&cpu, cpu.pc + 3);
+                cpu.pc = target;
+                break;
+            }
+
             // MAIN OPCODES
         }
     }
