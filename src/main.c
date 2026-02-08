@@ -374,6 +374,8 @@ int main() {
                 cpu_add(&cpu, val);
                 INCR(1);
             }
+                        case 0x87: cpu_add(&cpu, cpu.registers.a); INCR(1); // ADD A, A
+
             // MAIN OPCODES
         }
     }
