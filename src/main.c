@@ -109,6 +109,10 @@ int main() {
                 cpu.memory[cpu.registers.de] = cpu.registers.a;
                 INCR(1);
             }
+                        case 0x13: { // INC DE
+                cpu.registers.de++;
+                INCR(1);
+            }
             // MAIN OPCODES
         }
     }
