@@ -257,6 +257,13 @@ int main() {
                 INCR(1);
             }
 
+                        case 0x35: { // DEC (HL)
+                uint8_t val = cpu.memory[cpu.registers.hl];
+                cpu_dec(&cpu, &val);
+                cpu.memory[cpu.registers.hl] = val; 
+                INCR(1);
+            }
+
             // MAIN OPCODES
         }
     }
