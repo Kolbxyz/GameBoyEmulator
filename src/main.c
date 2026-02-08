@@ -280,6 +280,9 @@ int main() {
 
                         case 0x3D: cpu_dec(&cpu, &cpu.registers.a); INCR(1); // DEC A
 
+                        OP_LD_8(0x3E, b) // LD A, u8
+
+            // --- LD B, r ---
             // MAIN OPCODES
         }
     }
