@@ -560,6 +560,12 @@ int main() {
                 break;
             }
 
+                        case 0xDE: { // SBC A, u8 (Immediate)
+                uint8_t val = cpu.memory[cpu.pc + 1];
+                cpu_sbc(&cpu, val);
+                INCR(2);
+            }
+
             // MAIN OPCODES
         }
     }
