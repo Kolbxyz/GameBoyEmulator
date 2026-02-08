@@ -226,6 +226,12 @@ int main() {
                 INCR(2);
             }
 
+                        case 0x2F: { // CPL
+                cpu.registers.a = ~cpu.registers.a;
+                cpu.registers.f |= 0x60;
+                INCR(1);
+            }
+
             // MAIN OPCODES
         }
     }
