@@ -13,7 +13,13 @@ void init_cpu(cpu_t *cpu)
 void execute_cb_instruction(cpu_t *cpu, uint8_t opcode)
 {
     switch (opcode) {
-        // CB OPCODES
+                case 0x30: { // SWAP B
+            uint8_t val = cpu->registers.b;
+            cpu->registers.b = ((val & 0x0F) << 4) | ((val & 0xF0) >> 4);
+            cpu->registers.f = (cpu->registers.b == 0) ? 0x80 : 0x00;
+            break;
+        
+            // CB OPCODES
     }
 }
 
