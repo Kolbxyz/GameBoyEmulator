@@ -396,6 +396,11 @@ int main() {
                         case 0x93: cpu_sub(&cpu, cpu.registers.e); INCR(1); // SUB E
                         case 0x94: cpu_sub(&cpu, cpu.registers.h); INCR(1); // SUB H
                         case 0x95: cpu_sub(&cpu, cpu.registers.l); INCR(1); // SUB L
+                        case 0x96: { // SUB (HL)
+                uint8_t val = cpu.memory[cpu.registers.hl];
+                cpu_sub(&cpu, val);
+                INCR(1);
+            }
             // MAIN OPCODES
         }
     }
