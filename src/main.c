@@ -13,13 +13,73 @@ void init_cpu(cpu_t *cpu)
 void execute_cb_instruction(cpu_t *cpu, uint8_t opcode)
 {
     switch (opcode) {
-                case 0x30: { // SWAP B
+        case 0x30: { // SWAP B
             uint8_t val = cpu->registers.b;
             cpu->registers.b = ((val & 0x0F) << 4) | ((val & 0xF0) >> 4);
             cpu->registers.f = (cpu->registers.b == 0) ? 0x80 : 0x00;
             break;
-        
-            
+        }
+        case 0x31: { // SWAP C
+            uint8_t val = cpu->registers.c;
+            cpu->registers.c = ((val & 0x0F) << 4) | ((val & 0xF0) >> 4);
+            cpu->registers.f = (cpu->registers.c == 0) ? 0x80 : 0x00;
+            break;
+        }
+        case 0x32: { // SWAP D
+            uint8_t val = cpu->registers.d;
+            cpu->registers.d = ((val & 0x0F) << 4) | ((val & 0xF0) >> 4);
+            cpu->registers.f = (cpu->registers.d == 0) ? 0x80 : 0x00;
+            break;
+        }
+        case 0x33: { // SWAP E
+            uint8_t val = cpu->registers.e;
+            cpu->registers.e = ((val & 0x0F) << 4) | ((val & 0xF0) >> 4);
+            cpu->registers.f = (cpu->registers.e == 0) ? 0x80 : 0x00;
+            break;
+        }
+        case 0x34: { // SWAP H
+            uint8_t val = cpu->registers.h;
+            cpu->registers.h = ((val & 0x0F) << 4) | ((val & 0xF0) >> 4);
+            cpu->registers.f = (cpu->registers.h == 0) ? 0x80 : 0x00;
+            break;
+        }
+        case 0x35: { // SWAP L
+            uint8_t val = cpu->registers.l;
+            cpu->registers.l = ((val & 0x0F) << 4) | ((val & 0xF0) >> 4);
+            cpu->registers.f = (cpu->registers.l == 0) ? 0x80 : 0x00;
+            break;
+        }
+        case 0x36: { // SWAP (HL)
+            uint16_t addr = (cpu->registers.h << 8) | cpu->registers.l;
+            uint8_t val = cpu->memory[addr];
+            uint8_t res = ((val & 0x0F) << 4) | ((val & 0xF0) >> 4);
+
+            cpu->memory[addr] = res;
+            cpu->registers.f = (res == 0) ? 0x80 : 0x00;
+            break;
+        }
+        case 0x37: { // SWAP A
+            uint8_t a = cpu->registers.a;
+            uint8_t lower = a & 0x0F;
+            uint8_t upper = (a & 0xF0) >> 4;
+            int z = 0;
+
+            cpu->registers.a = (lower << 4) | upper;
+            z = (cpu->registers.a == 0);
+            cpu->registers.f = (z << 7);
+            break;
+        }
+        case 0x47: { // BIT 0, A
+            uint8_t bit = (cpu->registers.a >> 0) & 1;
+            int z = (bit == 0);
+            int current_c = (cpu->registers.f & FLAG_C) ? 1 : 0;
+
+            cpu->registers.f = (z << 7) | (0 << 6) | (1 << 5) | (current_c << 4);
+            break;
+        }
+        default:
+            printf("[?] Unknown : 0x%02X addr 0x%04X\n", opcode, cpu->pc);
+            break;
     }
 }
 
@@ -36,31 +96,31 @@ int main() {
         opcode = cpu.memory[cpu.pc];
         // printf("> [%d](%#4x) %#4x\n", counter, cpu.pc, opcode); // Commenté pour alléger le log si besoin
         switch (opcode) {
-                        case 0x00: INCR(1); // NOP
+            case 0x00: INCR(1); // NOP
 
-                        OP_LD_16(0x01, bc) // LD BC, u16
+            OP_LD_16(0x01, bc) // LD BC, u16
 
-                        case 0x02: { // LD (BC), A
+            case 0x02: { // LD (BC), A
                 cpu.memory[cpu.registers.bc] = cpu.registers.a;
                 INCR(1);
             }
 
-                        case 0x03: { // INC BC
+            case 0x03: { // INC BC
                 cpu.registers.bc++;
                 INCR(1);
             }
 
             // --- INC r (Increment 8-bit) ---
-                        case 0x04: cpu_inc(&cpu, &cpu.registers.b); INCR(1); // INC B
+            case 0x04: cpu_inc(&cpu, &cpu.registers.b); INCR(1); // INC B
 
-                        case 0x05: { // DEC B
+            case 0x05: { // DEC B
                 cpu_dec(&cpu, &cpu.registers.b);
                 INCR(1);
             }
 
-                        OP_LD_8(0x06, b) // LD B, u8
+            OP_LD_8(0x06, b) // LD B, u8
 
-                        case 0x07: { // RLCA (Rotate Left Circular Accumulator)
+            case 0x07: { // RLCA (Rotate Left Circular Accumulator)
                 uint8_t a = cpu.registers.a;
                 uint8_t carry = (a >> 7);
                 cpu.registers.a = (a << 1) | carry;
@@ -68,30 +128,30 @@ int main() {
                 INCR(1);
             }
 
-                        case 0x09: { // ADD HL, BC
+            case 0x09: { // ADD HL, BC
                 cpu_add_hl(&cpu, cpu.registers.bc);
                 INCR(1);
             }
 
-                        case 0x0A: { // LD A, (BC)
+            case 0x0A: { // LD A, (BC)
                 cpu.registers.a = cpu.memory[cpu.registers.bc];
                 INCR(1);
             }
 
-                        case 0x0B: { // DEC BC
+            case 0x0B: { // DEC BC
                 cpu.registers.bc--;
                 INCR(1);
             }
 
-                        case 0x0C: cpu_inc(&cpu, &cpu.registers.c); INCR(1); // INC C
-                        case 0x0D: { // DEC C
+            case 0x0C: cpu_inc(&cpu, &cpu.registers.c); INCR(1); // INC C
+            case 0x0D: { // DEC C
                 cpu_dec(&cpu, &cpu.registers.c);
                 INCR(1);
             }
 
-                        OP_LD_8(0x0E, c) // LD C, u8
+            OP_LD_8(0x0E, c) // LD C, u8
 
-                        case 0x0F: { // RRCA (Rotate Right Circular Accumulator)
+            case 0x0F: { // RRCA (Rotate Right Circular Accumulator)
                 uint8_t a = cpu.registers.a;
                 uint8_t carry = (a & 1);
                 cpu.registers.a = (a >> 1) | (carry << 7);
@@ -99,30 +159,30 @@ int main() {
                 INCR(1);
             }
 
-                        case 0x10: { // STOP
+            case 0x10: { // STOP
                 INCR(2);
             }
 
-                        OP_LD_16(0x11, de) // LD DE, u16
+            OP_LD_16(0x11, de) // LD DE, u16
 
-                        case 0x12: { // LD (DE), A
+            case 0x12: { // LD (DE), A
                 cpu.memory[cpu.registers.de] = cpu.registers.a;
                 INCR(1);
             }
-                        case 0x13: { // INC DE
+            case 0x13: { // INC DE
                 cpu.registers.de++;
                 INCR(1);
             }
-                        case 0x14: cpu_inc(&cpu, &cpu.registers.d); INCR(1); // INC D
+            case 0x14: cpu_inc(&cpu, &cpu.registers.d); INCR(1); // INC D
 
-                        case 0x15: cpu_dec(&cpu, &cpu.registers.d); INCR(1); // DEC D
+            case 0x15: cpu_dec(&cpu, &cpu.registers.d); INCR(1); // DEC D
 
-                        case 0x16: { // LD D, u8
+            case 0x16: { // LD D, u8
                 cpu.registers.d = cpu.memory[cpu.pc + 1];
                 INCR(2);
             }
 
-                        case 0x17: { // RLA (Rotate Left Accumulator through Carry) - Manquait !
+            case 0x17: { // RLA (Rotate Left Accumulator through Carry) - Manquait !
                 uint8_t a = cpu.registers.a;
                 uint8_t old_c = (cpu.registers.f & FLAG_C) ? 1 : 0;
                 uint8_t new_c = (a >> 7);
@@ -131,26 +191,26 @@ int main() {
                 INCR(1);
             }
 
-                        case 0x19: { // ADD HL, DE
+            case 0x19: { // ADD HL, DE
                 cpu_add_hl(&cpu, cpu.registers.de);
                 INCR(1);
             }
 
-                        case 0x1A: { // LD A, (DE)
+            case 0x1A: { // LD A, (DE)
                 cpu.registers.a = cpu.memory[cpu.registers.de];
                 INCR(1);
             }
 
-                        case 0x1B: cpu.registers.de--; INCR(1); // DEC DE - Manquait !
-                        case 0x1C: cpu_inc(&cpu, &cpu.registers.e); INCR(1); // INC E
-                        case 0x1D: cpu_dec(&cpu, &cpu.registers.e); INCR(1); // DEC E
+            case 0x1B: cpu.registers.de--; INCR(1); // DEC DE - Manquait !
+            case 0x1C: cpu_inc(&cpu, &cpu.registers.e); INCR(1); // INC E
+            case 0x1D: cpu_dec(&cpu, &cpu.registers.e); INCR(1); // DEC E
 
-                        case 0x1E: { // LD E, u8
+            case 0x1E: { // LD E, u8
                 cpu.registers.e = cpu.memory[cpu.pc + 1];
                 INCR(2);
             }
 
-                        case 0x1F: { // RRA (Rotate Right Accumulator through Carry) - Manquait !
+            case 0x1F: { // RRA (Rotate Right Accumulator through Carry) - Manquait !
                 uint8_t a = cpu.registers.a;
                 uint8_t old_c = (cpu.registers.f & FLAG_C) ? 1 : 0;
                 uint8_t new_c = (a & 1);
@@ -159,7 +219,7 @@ int main() {
                 INCR(1);
             }
 
-                        case 0x20: { // JR NZ, r8
+            case 0x20: { // JR NZ, r8
                 int8_t offset = (int8_t)cpu.memory[cpu.pc + 1];
                 cpu.pc += 2;
                 if (!(cpu.registers.f & 0x80)) {
@@ -168,28 +228,28 @@ int main() {
                 break;
             }
 
-                        OP_LD_16(0x21, hl) // LD HL, u16
+            OP_LD_16(0x21, hl) // LD HL, u16
 
-                        case 0x22: { // LD (HL+), A
+            case 0x22: { // LD (HL+), A
                 cpu.memory[cpu.registers.hl++] = cpu.registers.a;
                 INCR(1);
             }
 
-                        case 0x23: { // INC HL
+            case 0x23: { // INC HL
                 cpu.registers.hl++;
                 INCR(1);
             }
 
-                        case 0x24: cpu_inc(&cpu, &cpu.registers.h); INCR(1); // INC H
+            case 0x24: cpu_inc(&cpu, &cpu.registers.h); INCR(1); // INC H
 
-                        case 0x25: cpu_dec(&cpu, &cpu.registers.h); INCR(1); // DEC H
+            case 0x25: cpu_dec(&cpu, &cpu.registers.h); INCR(1); // DEC H
 
-                        case 0x26: { // LD H, u8
+            case 0x26: { // LD H, u8
                 cpu.registers.h = cpu.memory[cpu.pc + 1];
                 INCR(2);
             }
 
-                        case 0x27: { // DAA
+            case 0x27: { // DAA
                 int a = cpu.registers.a;
                 if ((cpu.registers.f & FLAG_N) == 0) {
                     if ((cpu.registers.f & FLAG_H) || (a & 0x0F) > 9) a += 0x06;
@@ -205,49 +265,49 @@ int main() {
                 INCR(1);
             }
 
-                        case 0x29: { // ADD HL, HL
+            case 0x29: { // ADD HL, HL
                 cpu_add_hl(&cpu, cpu.registers.hl);
                 INCR(1);
             }
 
-                        case 0x2A: { // LD A, (HL+)
+            case 0x2A: { // LD A, (HL+)
                 cpu.registers.a = cpu.memory[cpu.registers.hl++];
                 INCR(1);
             }
 
-                        case 0x2B: cpu.registers.hl--; INCR(1); // DEC HL - Manquait !
+            case 0x2B: cpu.registers.hl--; INCR(1); // DEC HL - Manquait !
 
-                        case 0x2C: cpu_inc(&cpu, &cpu.registers.l); INCR(1); // INC L
+            case 0x2C: cpu_inc(&cpu, &cpu.registers.l); INCR(1); // INC L
 
-                        case 0x2D: cpu_dec(&cpu, &cpu.registers.l); INCR(1); // DEC L
+            case 0x2D: cpu_dec(&cpu, &cpu.registers.l); INCR(1); // DEC L
 
-                        case 0x2E: { // LD L, u8
+            case 0x2E: { // LD L, u8
                 cpu.registers.l = cpu.memory[cpu.pc + 1];
                 INCR(2);
             }
 
-                        case 0x2F: { // CPL
+            case 0x2F: { // CPL
                 cpu.registers.a = ~cpu.registers.a;
                 cpu.registers.f |= 0x60;
                 INCR(1);
             }
 
-                        case 0x31: { // LD SP, u16
+            case 0x31: { // LD SP, u16
                 cpu.sp = read_16(&cpu, cpu.pc + 1);
                 INCR(3);
             }
 
-                        case 0x32: { // LD (HL-), A
+            case 0x32: { // LD (HL-), A
                 cpu.memory[cpu.registers.hl--] = cpu.registers.a;
                 INCR(1);
             }
 
-                        case 0x33: { // INC SP
+            case 0x33: { // INC SP
                 cpu.sp++;
                 INCR(1);
             }
 
-                        case 0x34: { // INC (HL)
+            case 0x34: { // INC (HL)
                 uint8_t val = cpu.memory[cpu.registers.hl] + 1;
                 int z = (val == 0);
                 int h = ((val & 0x0F) == 0x00);
@@ -257,343 +317,343 @@ int main() {
                 INCR(1);
             }
 
-                        case 0x35: { // DEC (HL)
+            case 0x35: { // DEC (HL)
                 uint8_t val = cpu.memory[cpu.registers.hl];
                 cpu_dec(&cpu, &val);
                 cpu.memory[cpu.registers.hl] = val; 
                 INCR(1);
             }
 
-                        OP_LD_8(0x36, hl) // LD (HL), u8
+            OP_LD_8(0x36, hl) // LD (HL), u8
 
-                        case 0x39: { // ADD HL, SP
+            case 0x39: { // ADD HL, SP
                 cpu_add_hl(&cpu, cpu.sp);
                 INCR(1);
             }
 
-                        case 0x3A: { // LD A, (HL-)
+            case 0x3A: { // LD A, (HL-)
                 cpu.registers.a = cpu.memory[cpu.registers.hl--];
                 INCR(1);
             }
 
-                        case 0x3B: cpu.sp--; INCR(1); // DEC SP
+            case 0x3B: cpu.sp--; INCR(1); // DEC SP
 
-                        case 0x3D: cpu_dec(&cpu, &cpu.registers.a); INCR(1); // DEC A
+            case 0x3D: cpu_dec(&cpu, &cpu.registers.a); INCR(1); // DEC A
 
-                        OP_LD_8(0x3E, b) // LD A, u8
+            OP_LD_8(0x3E, b) // LD A, u8
 
             // --- LD B, r ---
-                        case 0x40: cpu.registers.b = cpu.registers.b; INCR(1); // LD B, B
-                        case 0x41: cpu.registers.b = cpu.registers.c; INCR(1); // LD B, C
-                        case 0x42: cpu.registers.b = cpu.registers.d; INCR(1); // LD B, D
-                        case 0x43: cpu.registers.b = cpu.registers.e; INCR(1); // LD B, E
-                        case 0x44: cpu.registers.b = cpu.registers.h; INCR(1); // LD B, H
-                        case 0x45: cpu.registers.b = cpu.registers.l; INCR(1); // LD B, L
-                        case 0x46: cpu.registers.b = cpu.memory[cpu.registers.hl]; INCR(1); // LD B, (HL)
-                        case 0x47: cpu.registers.b = cpu.registers.a; INCR(1); // LD B, A
+            case 0x40: cpu.registers.b = cpu.registers.b; INCR(1); // LD B, B
+            case 0x41: cpu.registers.b = cpu.registers.c; INCR(1); // LD B, C
+            case 0x42: cpu.registers.b = cpu.registers.d; INCR(1); // LD B, D
+            case 0x43: cpu.registers.b = cpu.registers.e; INCR(1); // LD B, E
+            case 0x44: cpu.registers.b = cpu.registers.h; INCR(1); // LD B, H
+            case 0x45: cpu.registers.b = cpu.registers.l; INCR(1); // LD B, L
+            case 0x46: cpu.registers.b = cpu.memory[cpu.registers.hl]; INCR(1); // LD B, (HL)
+            case 0x47: cpu.registers.b = cpu.registers.a; INCR(1); // LD B, A
 
             // --- LD C, r ---
-                        case 0x48: cpu.registers.c = cpu.registers.b; INCR(1); // LD C, B
-                        case 0x49: cpu.registers.c = cpu.registers.c; INCR(1); // LD C, C
-                        case 0x4A: cpu.registers.c = cpu.registers.d; INCR(1); // LD C, D
-                        case 0x4B: cpu.registers.c = cpu.registers.e; INCR(1); // LD C, E
-                        case 0x4C: cpu.registers.c = cpu.registers.h; INCR(1); // LD C, H
-                        case 0x4D: cpu.registers.c = cpu.registers.l; INCR(1); // LD C, L
-                        case 0x4E: cpu.registers.c = cpu.memory[cpu.registers.hl]; INCR(1); // LD C, (HL)
-                        case 0x4F: cpu.registers.c = cpu.registers.a; INCR(1); // LD C, A
+            case 0x48: cpu.registers.c = cpu.registers.b; INCR(1); // LD C, B
+            case 0x49: cpu.registers.c = cpu.registers.c; INCR(1); // LD C, C
+            case 0x4A: cpu.registers.c = cpu.registers.d; INCR(1); // LD C, D
+            case 0x4B: cpu.registers.c = cpu.registers.e; INCR(1); // LD C, E
+            case 0x4C: cpu.registers.c = cpu.registers.h; INCR(1); // LD C, H
+            case 0x4D: cpu.registers.c = cpu.registers.l; INCR(1); // LD C, L
+            case 0x4E: cpu.registers.c = cpu.memory[cpu.registers.hl]; INCR(1); // LD C, (HL)
+            case 0x4F: cpu.registers.c = cpu.registers.a; INCR(1); // LD C, A
 
             // --- LD D, r ---
-                        case 0x50: cpu.registers.d = cpu.registers.b; INCR(1); // LD D, B
-                        case 0x51: cpu.registers.d = cpu.registers.c; INCR(1); // LD D, C
-                        case 0x52: cpu.registers.d = cpu.registers.d; INCR(1); // LD D, D
-                        case 0x53: cpu.registers.d = cpu.registers.e; INCR(1); // LD D, E
-                        case 0x54: cpu.registers.d = cpu.registers.h; INCR(1); // LD D, H
-                        case 0x55: cpu.registers.d = cpu.registers.l; INCR(1); // LD D, L
-                        case 0x56: cpu.registers.d = cpu.memory[cpu.registers.hl]; INCR(1); // LD D, (HL)
-                        case 0x57: cpu.registers.d = cpu.registers.a; INCR(1); // LD D, A
+            case 0x50: cpu.registers.d = cpu.registers.b; INCR(1); // LD D, B
+            case 0x51: cpu.registers.d = cpu.registers.c; INCR(1); // LD D, C
+            case 0x52: cpu.registers.d = cpu.registers.d; INCR(1); // LD D, D
+            case 0x53: cpu.registers.d = cpu.registers.e; INCR(1); // LD D, E
+            case 0x54: cpu.registers.d = cpu.registers.h; INCR(1); // LD D, H
+            case 0x55: cpu.registers.d = cpu.registers.l; INCR(1); // LD D, L
+            case 0x56: cpu.registers.d = cpu.memory[cpu.registers.hl]; INCR(1); // LD D, (HL)
+            case 0x57: cpu.registers.d = cpu.registers.a; INCR(1); // LD D, A
 
             // --- LD E, r ---
-                        case 0x58: cpu.registers.e = cpu.registers.b; INCR(1); // LD E, B
-                        case 0x59: cpu.registers.e = cpu.registers.c; INCR(1); // LD E, C
-                        case 0x5A: cpu.registers.e = cpu.registers.d; INCR(1); // LD E, D
-                        case 0x5B: cpu.registers.e = cpu.registers.e; INCR(1); // LD E, E
-                        case 0x5C: cpu.registers.e = cpu.registers.h; INCR(1); // LD E, H
-                        case 0x5D: cpu.registers.e = cpu.registers.l; INCR(1); // LD E, L
-                        case 0x5E: cpu.registers.e = cpu.memory[cpu.registers.hl]; INCR(1); // LD E, (HL)
-                        case 0x5F: cpu.registers.e = cpu.registers.a; INCR(1); // LD E, A
+            case 0x58: cpu.registers.e = cpu.registers.b; INCR(1); // LD E, B
+            case 0x59: cpu.registers.e = cpu.registers.c; INCR(1); // LD E, C
+            case 0x5A: cpu.registers.e = cpu.registers.d; INCR(1); // LD E, D
+            case 0x5B: cpu.registers.e = cpu.registers.e; INCR(1); // LD E, E
+            case 0x5C: cpu.registers.e = cpu.registers.h; INCR(1); // LD E, H
+            case 0x5D: cpu.registers.e = cpu.registers.l; INCR(1); // LD E, L
+            case 0x5E: cpu.registers.e = cpu.memory[cpu.registers.hl]; INCR(1); // LD E, (HL)
+            case 0x5F: cpu.registers.e = cpu.registers.a; INCR(1); // LD E, A
 
             // --- LD H, r ---
-                        case 0x60: cpu.registers.h = cpu.registers.b; INCR(1); // LD H, B
-                        case 0x61: cpu.registers.h = cpu.registers.c; INCR(1); // LD H, C
-                        case 0x62: cpu.registers.h = cpu.registers.d; INCR(1); // LD H, D
-                        case 0x63: cpu.registers.h = cpu.registers.e; INCR(1); // LD H, E
-                        case 0x64: cpu.registers.h = cpu.registers.h; INCR(1); // LD H, H
-                        case 0x65: cpu.registers.h = cpu.registers.l; INCR(1); // LD H, L
-                        case 0x66: cpu.registers.h = cpu.memory[cpu.registers.hl]; INCR(1); // LD H, (HL)
-                        case 0x67: cpu.registers.h = cpu.registers.a; INCR(1); // LD H, A
+            case 0x60: cpu.registers.h = cpu.registers.b; INCR(1); // LD H, B
+            case 0x61: cpu.registers.h = cpu.registers.c; INCR(1); // LD H, C
+            case 0x62: cpu.registers.h = cpu.registers.d; INCR(1); // LD H, D
+            case 0x63: cpu.registers.h = cpu.registers.e; INCR(1); // LD H, E
+            case 0x64: cpu.registers.h = cpu.registers.h; INCR(1); // LD H, H
+            case 0x65: cpu.registers.h = cpu.registers.l; INCR(1); // LD H, L
+            case 0x66: cpu.registers.h = cpu.memory[cpu.registers.hl]; INCR(1); // LD H, (HL)
+            case 0x67: cpu.registers.h = cpu.registers.a; INCR(1); // LD H, A
 
             // --- LD L, r ---
-                        case 0x68: cpu.registers.l = cpu.registers.b; INCR(1); // LD L, B
-                        case 0x69: cpu.registers.l = cpu.registers.c; INCR(1); // LD L, C
-                        case 0x6A: cpu.registers.l = cpu.registers.d; INCR(1); // LD L, D
-                        case 0x6B: cpu.registers.l = cpu.registers.e; INCR(1); // LD L, E
-                        case 0x6C: cpu.registers.l = cpu.registers.h; INCR(1); // LD L, H
-                        case 0x6D: cpu.registers.l = cpu.registers.l; INCR(1); // LD L, L
-                        case 0x6E: cpu.registers.l = cpu.memory[cpu.registers.hl]; INCR(1); // LD L, (HL)
-                        case 0x6F: cpu.registers.l = cpu.registers.a; INCR(1); // LD L, A
+            case 0x68: cpu.registers.l = cpu.registers.b; INCR(1); // LD L, B
+            case 0x69: cpu.registers.l = cpu.registers.c; INCR(1); // LD L, C
+            case 0x6A: cpu.registers.l = cpu.registers.d; INCR(1); // LD L, D
+            case 0x6B: cpu.registers.l = cpu.registers.e; INCR(1); // LD L, E
+            case 0x6C: cpu.registers.l = cpu.registers.h; INCR(1); // LD L, H
+            case 0x6D: cpu.registers.l = cpu.registers.l; INCR(1); // LD L, L
+            case 0x6E: cpu.registers.l = cpu.memory[cpu.registers.hl]; INCR(1); // LD L, (HL)
+            case 0x6F: cpu.registers.l = cpu.registers.a; INCR(1); // LD L, A
 
             // --- LD (HL), r ---
-                        case 0x70: cpu.memory[cpu.registers.hl] = cpu.registers.b; INCR(1); // LD (HL), B
-                        case 0x71: cpu.memory[cpu.registers.hl] = cpu.registers.c; INCR(1); // LD (HL), C
-                        case 0x72: cpu.memory[cpu.registers.hl] = cpu.registers.d; INCR(1); // LD (HL), D
-                        case 0x73: cpu.memory[cpu.registers.hl] = cpu.registers.e; INCR(1); // LD (HL), E
-                        case 0x74: cpu.memory[cpu.registers.hl] = cpu.registers.h; INCR(1); // LD (HL), H
-                        case 0x75: cpu.memory[cpu.registers.hl] = cpu.registers.l; INCR(1); // LD (HL), L
-                        case 0x76: INCR(1); // HALT
-                        case 0x77: cpu.memory[cpu.registers.hl] = cpu.registers.a; INCR(1); // LD (HL), A
+            case 0x70: cpu.memory[cpu.registers.hl] = cpu.registers.b; INCR(1); // LD (HL), B
+            case 0x71: cpu.memory[cpu.registers.hl] = cpu.registers.c; INCR(1); // LD (HL), C
+            case 0x72: cpu.memory[cpu.registers.hl] = cpu.registers.d; INCR(1); // LD (HL), D
+            case 0x73: cpu.memory[cpu.registers.hl] = cpu.registers.e; INCR(1); // LD (HL), E
+            case 0x74: cpu.memory[cpu.registers.hl] = cpu.registers.h; INCR(1); // LD (HL), H
+            case 0x75: cpu.memory[cpu.registers.hl] = cpu.registers.l; INCR(1); // LD (HL), L
+            case 0x76: INCR(1); // HALT
+            case 0x77: cpu.memory[cpu.registers.hl] = cpu.registers.a; INCR(1); // LD (HL), A
 
             // --- LD A, r ---
-                        case 0x78: cpu.registers.a = cpu.registers.b; INCR(1); // LD A, B
-                        case 0x79: cpu.registers.a = cpu.registers.c; INCR(1); // LD A, C
-                        case 0x7A: cpu.registers.a = cpu.registers.d; INCR(1); // LD A, D
-                        case 0x7B: cpu.registers.a = cpu.registers.e; INCR(1); // LD A, E
-                        case 0x7C: cpu.registers.a = cpu.registers.h; INCR(1); // LD A, H
-                        case 0x7D: cpu.registers.a = cpu.registers.l; INCR(1); // LD A, L
-                        case 0x7E: cpu.registers.a = cpu.memory[cpu.registers.hl]; INCR(1); // LD A, (HL)
-                        case 0x7F: cpu.registers.a = cpu.registers.a; INCR(1); // LD A, A
+            case 0x78: cpu.registers.a = cpu.registers.b; INCR(1); // LD A, B
+            case 0x79: cpu.registers.a = cpu.registers.c; INCR(1); // LD A, C
+            case 0x7A: cpu.registers.a = cpu.registers.d; INCR(1); // LD A, D
+            case 0x7B: cpu.registers.a = cpu.registers.e; INCR(1); // LD A, E
+            case 0x7C: cpu.registers.a = cpu.registers.h; INCR(1); // LD A, H
+            case 0x7D: cpu.registers.a = cpu.registers.l; INCR(1); // LD A, L
+            case 0x7E: cpu.registers.a = cpu.memory[cpu.registers.hl]; INCR(1); // LD A, (HL)
+            case 0x7F: cpu.registers.a = cpu.registers.a; INCR(1); // LD A, A
 
             // --- ADD A, r ---
-                        case 0x80: cpu_add(&cpu, cpu.registers.b); INCR(1); // ADD A, B
-                        case 0x81: cpu_add(&cpu, cpu.registers.c); INCR(1); // ADD A, C
-                        case 0x82: cpu_add(&cpu, cpu.registers.d); INCR(1); // ADD A, D
-                        case 0x83: cpu_add(&cpu, cpu.registers.e); INCR(1); // ADD A, E
-                        case 0x84: cpu_add(&cpu, cpu.registers.h); INCR(1); // ADD A, H
-                        case 0x85: cpu_add(&cpu, cpu.registers.l); INCR(1); // ADD A, L
-                        case 0x86: { // ADD A, (HL)
+            case 0x80: cpu_add(&cpu, cpu.registers.b); INCR(1); // ADD A, B
+            case 0x81: cpu_add(&cpu, cpu.registers.c); INCR(1); // ADD A, C
+            case 0x82: cpu_add(&cpu, cpu.registers.d); INCR(1); // ADD A, D
+            case 0x83: cpu_add(&cpu, cpu.registers.e); INCR(1); // ADD A, E
+            case 0x84: cpu_add(&cpu, cpu.registers.h); INCR(1); // ADD A, H
+            case 0x85: cpu_add(&cpu, cpu.registers.l); INCR(1); // ADD A, L
+            case 0x86: { // ADD A, (HL)
                 uint8_t val = cpu.memory[cpu.registers.hl];
                 cpu_add(&cpu, val);
                 INCR(1);
             }
-                        case 0x87: cpu_add(&cpu, cpu.registers.a); INCR(1); // ADD A, A
+            case 0x87: cpu_add(&cpu, cpu.registers.a); INCR(1); // ADD A, A
 
-                        case 0x88: cpu_adc(&cpu, cpu.registers.b); INCR(1); // ADC A, B
-                        case 0x89: cpu_adc(&cpu, cpu.registers.c); INCR(1); // ADC A, C
-                        case 0x8A: cpu_adc(&cpu, cpu.registers.d); INCR(1); // ADC A, D
-                        case 0x8B: cpu_adc(&cpu, cpu.registers.e); INCR(1); // ADC A, E
-                        case 0x8C: cpu_adc(&cpu, cpu.registers.h); INCR(1); // ADC A, H
-                        case 0x8D: cpu_adc(&cpu, cpu.registers.l); INCR(1); // ADC A, L
-                        case 0x8E: { // ADC A, (HL)
+            case 0x88: cpu_adc(&cpu, cpu.registers.b); INCR(1); // ADC A, B
+            case 0x89: cpu_adc(&cpu, cpu.registers.c); INCR(1); // ADC A, C
+            case 0x8A: cpu_adc(&cpu, cpu.registers.d); INCR(1); // ADC A, D
+            case 0x8B: cpu_adc(&cpu, cpu.registers.e); INCR(1); // ADC A, E
+            case 0x8C: cpu_adc(&cpu, cpu.registers.h); INCR(1); // ADC A, H
+            case 0x8D: cpu_adc(&cpu, cpu.registers.l); INCR(1); // ADC A, L
+            case 0x8E: { // ADC A, (HL)
                 uint8_t val = cpu.memory[cpu.registers.hl];
                 cpu_adc(&cpu, val);
                 INCR(1);
             }
-                        case 0x8F: cpu_adc(&cpu, cpu.registers.a); INCR(1);
+            case 0x8F: cpu_adc(&cpu, cpu.registers.a); INCR(1);
 
             // --- SUB A, r (Subtract) ---
-                        case 0x90: cpu_sub(&cpu, cpu.registers.b); INCR(1); // SUB B
-                        case 0x91: cpu_sub(&cpu, cpu.registers.c); INCR(1); // SUB C
-                        case 0x92: cpu_sub(&cpu, cpu.registers.d); INCR(1); // SUB D
-                        case 0x93: cpu_sub(&cpu, cpu.registers.e); INCR(1); // SUB E
-                        case 0x94: cpu_sub(&cpu, cpu.registers.h); INCR(1); // SUB H
-                        case 0x95: cpu_sub(&cpu, cpu.registers.l); INCR(1); // SUB L
-                        case 0x96: { // SUB (HL)
+            case 0x90: cpu_sub(&cpu, cpu.registers.b); INCR(1); // SUB B
+            case 0x91: cpu_sub(&cpu, cpu.registers.c); INCR(1); // SUB C
+            case 0x92: cpu_sub(&cpu, cpu.registers.d); INCR(1); // SUB D
+            case 0x93: cpu_sub(&cpu, cpu.registers.e); INCR(1); // SUB E
+            case 0x94: cpu_sub(&cpu, cpu.registers.h); INCR(1); // SUB H
+            case 0x95: cpu_sub(&cpu, cpu.registers.l); INCR(1); // SUB L
+            case 0x96: { // SUB (HL)
                 uint8_t val = cpu.memory[cpu.registers.hl];
                 cpu_sub(&cpu, val);
                 INCR(1);
             }
-                        case 0x97: cpu_sub(&cpu, cpu.registers.a); INCR(1); // SUB A
+            case 0x97: cpu_sub(&cpu, cpu.registers.a); INCR(1); // SUB A
 
             // --- SBC A, r (Subtract with Carry) ---
-                        case 0x98: cpu_sbc(&cpu, cpu.registers.b); INCR(1); // SBC A, B
-                        case 0x99: cpu_sbc(&cpu, cpu.registers.c); INCR(1); // SBC A, C
-                        case 0x9A: cpu_sbc(&cpu, cpu.registers.d); INCR(1); // SBC A, D
-                        case 0x9B: cpu_sbc(&cpu, cpu.registers.e); INCR(1); // SBC A, E
-                        case 0x9C: cpu_sbc(&cpu, cpu.registers.h); INCR(1); // SBC A, H
-                        case 0x9D: cpu_sbc(&cpu, cpu.registers.l); INCR(1); // SBC A, L
-                        case 0x9E: { // SBC A, (HL)
+            case 0x98: cpu_sbc(&cpu, cpu.registers.b); INCR(1); // SBC A, B
+            case 0x99: cpu_sbc(&cpu, cpu.registers.c); INCR(1); // SBC A, C
+            case 0x9A: cpu_sbc(&cpu, cpu.registers.d); INCR(1); // SBC A, D
+            case 0x9B: cpu_sbc(&cpu, cpu.registers.e); INCR(1); // SBC A, E
+            case 0x9C: cpu_sbc(&cpu, cpu.registers.h); INCR(1); // SBC A, H
+            case 0x9D: cpu_sbc(&cpu, cpu.registers.l); INCR(1); // SBC A, L
+            case 0x9E: { // SBC A, (HL)
                 uint8_t val = cpu.memory[cpu.registers.hl];
                 cpu_sbc(&cpu, val);
                 INCR(1);
             }
-                        case 0x9F: cpu_sbc(&cpu, cpu.registers.a); INCR(1); // SBC A, A
+            case 0x9F: cpu_sbc(&cpu, cpu.registers.a); INCR(1); // SBC A, A
 
             // --- AND A, r ---
-                        case 0xA0: cpu_and(&cpu, cpu.registers.b); INCR(1);
-                        case 0xA1: cpu_and(&cpu, cpu.registers.c); INCR(1);
-                        case 0xA2: cpu_and(&cpu, cpu.registers.d); INCR(1);
-                        case 0xA3: cpu_and(&cpu, cpu.registers.e); INCR(1);
-                        case 0xA4: cpu_and(&cpu, cpu.registers.h); INCR(1);
-                        case 0xA5: cpu_and(&cpu, cpu.registers.l); INCR(1);
-                        case 0xA6: { // AND (HL)
+            case 0xA0: cpu_and(&cpu, cpu.registers.b); INCR(1);
+            case 0xA1: cpu_and(&cpu, cpu.registers.c); INCR(1);
+            case 0xA2: cpu_and(&cpu, cpu.registers.d); INCR(1);
+            case 0xA3: cpu_and(&cpu, cpu.registers.e); INCR(1);
+            case 0xA4: cpu_and(&cpu, cpu.registers.h); INCR(1);
+            case 0xA5: cpu_and(&cpu, cpu.registers.l); INCR(1);
+            case 0xA6: { // AND (HL)
                 uint8_t val = cpu.memory[cpu.registers.hl];
                 cpu_and(&cpu, val);
                 INCR(1);
             }
-                        case 0xA7: cpu_and(&cpu, cpu.registers.a); INCR(1);
+            case 0xA7: cpu_and(&cpu, cpu.registers.a); INCR(1);
 
             // --- XOR A, r ---
-                        case 0xA8: cpu_xor(&cpu, cpu.registers.b); INCR(1);
-                        case 0xA9: cpu_xor(&cpu, cpu.registers.c); INCR(1);
-                        case 0xAA: cpu_xor(&cpu, cpu.registers.d); INCR(1);
-                        case 0xAB: cpu_xor(&cpu, cpu.registers.e); INCR(1);
-                        case 0xAC: cpu_xor(&cpu, cpu.registers.h); INCR(1);
-                        case 0xAD: cpu_xor(&cpu, cpu.registers.l); INCR(1);
-                        case 0xAE: { // XOR (HL)
+            case 0xA8: cpu_xor(&cpu, cpu.registers.b); INCR(1);
+            case 0xA9: cpu_xor(&cpu, cpu.registers.c); INCR(1);
+            case 0xAA: cpu_xor(&cpu, cpu.registers.d); INCR(1);
+            case 0xAB: cpu_xor(&cpu, cpu.registers.e); INCR(1);
+            case 0xAC: cpu_xor(&cpu, cpu.registers.h); INCR(1);
+            case 0xAD: cpu_xor(&cpu, cpu.registers.l); INCR(1);
+            case 0xAE: { // XOR (HL)
                 uint8_t val = cpu.memory[cpu.registers.hl];
                 cpu_xor(&cpu, val);
                 INCR(1);
             }
-                        case 0xAF: { // XOR A
+            case 0xAF: { // XOR A
                 cpu.registers.a ^= cpu.registers.a;
                 cpu.registers.f = FLAG_Z;
                 INCR(1);
             }
 
             // --- OR A, r ---
-                        case 0xB0: cpu_or(&cpu, cpu.registers.b); INCR(1);
-                        case 0xB1: { // OR A, C (Attention doublon B1) - Corrigé
+            case 0xB0: cpu_or(&cpu, cpu.registers.b); INCR(1);
+            case 0xB1: { // OR A, C (Attention doublon B1) - Corrigé
                 cpu_or(&cpu, cpu.registers.c); 
                 INCR(1);
             }
-                        case 0xB2: cpu_or(&cpu, cpu.registers.d); INCR(1);
-                        case 0xB3: cpu_or(&cpu, cpu.registers.e); INCR(1);
-                        case 0xB4: cpu_or(&cpu, cpu.registers.h); INCR(1);
-                        case 0xB5: cpu_or(&cpu, cpu.registers.l); INCR(1);
-                        case 0xB6: { // OR (HL)
+            case 0xB2: cpu_or(&cpu, cpu.registers.d); INCR(1);
+            case 0xB3: cpu_or(&cpu, cpu.registers.e); INCR(1);
+            case 0xB4: cpu_or(&cpu, cpu.registers.h); INCR(1);
+            case 0xB5: cpu_or(&cpu, cpu.registers.l); INCR(1);
+            case 0xB6: { // OR (HL)
                 uint8_t val = cpu.memory[cpu.registers.hl];
                 cpu_or(&cpu, val);
                 INCR(1);
             }
-                        case 0xB7: cpu_or(&cpu, cpu.registers.a); INCR(1);
+            case 0xB7: cpu_or(&cpu, cpu.registers.a); INCR(1);
 
             // --- CP A, r (Compare) ---
-                        case 0xB8: cpu_cp(&cpu, cpu.registers.b); INCR(1); // CP B
-                        case 0xB9: cpu_cp(&cpu, cpu.registers.c); INCR(1); // CP C
-                        case 0xBA: cpu_cp(&cpu, cpu.registers.d); INCR(1); // CP D
-                        case 0xBB: cpu_cp(&cpu, cpu.registers.e); INCR(1); // CP E
-                        case 0xBC: cpu_cp(&cpu, cpu.registers.h); INCR(1); // CP H
-                        case 0xBD: cpu_cp(&cpu, cpu.registers.l); INCR(1); // CP L
-                        case 0xBE: { // CP (HL)
+            case 0xB8: cpu_cp(&cpu, cpu.registers.b); INCR(1); // CP B
+            case 0xB9: cpu_cp(&cpu, cpu.registers.c); INCR(1); // CP C
+            case 0xBA: cpu_cp(&cpu, cpu.registers.d); INCR(1); // CP D
+            case 0xBB: cpu_cp(&cpu, cpu.registers.e); INCR(1); // CP E
+            case 0xBC: cpu_cp(&cpu, cpu.registers.h); INCR(1); // CP H
+            case 0xBD: cpu_cp(&cpu, cpu.registers.l); INCR(1); // CP L
+            case 0xBE: { // CP (HL)
                 uint8_t val = cpu.memory[cpu.registers.hl];
                 cpu_cp(&cpu, val);
                 INCR(1);
             }
-                        case 0xBF: cpu_cp(&cpu, cpu.registers.a); INCR(1); // CP A
+            case 0xBF: cpu_cp(&cpu, cpu.registers.a); INCR(1); // CP A
 
-                        case 0xC1: { // POP BC
+            case 0xC1: { // POP BC
                 cpu.registers.bc = stack_pop16(&cpu);
                 INCR(1);
             }
 
-                        case 0xC3: { // JP a16
+            case 0xC3: { // JP a16
                 uint16_t destination = read_16(&cpu, cpu.pc + 1);
                 cpu.pc = destination;
                 break;
             }
 
-                        case 0xC5: { // PUSH BC
+            case 0xC5: { // PUSH BC
                 stack_push16(&cpu, cpu.registers.bc);
                 INCR(1);
             }
 
-                        case 0xC6: { // ADD A, u8 (Immediate)
+            case 0xC6: { // ADD A, u8 (Immediate)
                 uint8_t val = cpu.memory[cpu.pc + 1];
                 cpu_add(&cpu, val);
                 INCR(2);
             }
 
-                        case 0xC7: { // RST 00H
+            case 0xC7: { // RST 00H
                 stack_push16(&cpu, cpu.pc + 1);
                 cpu.pc = 0x0000;
                 break;
             }
 
-                        case 0xC9: { // RET
+            case 0xC9: { // RET
                 cpu.pc = stack_pop16(&cpu);
                 break;
             }
 
-                        case 0xCB: { // PREFIX CB
+            case 0xCB: { // PREFIX CB
                 uint8_t cb_opcode = cpu.memory[cpu.pc + 1];
                 execute_cb_instruction(&cpu, cb_opcode);
                 INCR(2);
             }
 
-                        case 0xCD: { // CALL a16
+            case 0xCD: { // CALL a16
                 uint16_t target = read_16(&cpu, cpu.pc + 1);
                 stack_push16(&cpu, cpu.pc + 3);
                 cpu.pc = target;
                 break;
             }
 
-                        case 0xCE: { // ADC A, u8 (Immediate)
+            case 0xCE: { // ADC A, u8 (Immediate)
                 uint8_t val = cpu.memory[cpu.pc + 1];
                 cpu_adc(&cpu, val);
                 INCR(2);
             }
 
-                        case 0xCF: { // RST 08H
+            case 0xCF: { // RST 08H
                 stack_push16(&cpu, cpu.pc + 1);
                 cpu.pc = 0x0008;
                 break;
             }
 
-                        case 0xD1: { // POP DE
+            case 0xD1: { // POP DE
                 cpu.registers.de = stack_pop16(&cpu);
                 INCR(1);
             }
 
-                        case 0xD5: { // PUSH DE
+            case 0xD5: { // PUSH DE
                 stack_push16(&cpu, cpu.registers.de);
                 INCR(1);
             }
 
-                        case 0xD6: { // SUB n (Immediate)
+            case 0xD6: { // SUB n (Immediate)
                 uint8_t val = cpu.memory[cpu.pc + 1];
                 cpu_sub(&cpu, val);
                 INCR(2);
             }
 
-                        case 0xD7: { // RST 10H
+            case 0xD7: { // RST 10H
                 stack_push16(&cpu, cpu.pc + 1);
                 cpu.pc = 0x0010;
                 break;
             }
 
-                        case 0xDE: { // SBC A, u8 (Immediate)
+            case 0xDE: { // SBC A, u8 (Immediate)
                 uint8_t val = cpu.memory[cpu.pc + 1];
                 cpu_sbc(&cpu, val);
                 INCR(2);
             }
 
-                        case 0xDF: { // RST 18H
+            case 0xDF: { // RST 18H
                 stack_push16(&cpu, cpu.pc + 1);
                 cpu.pc = 0x0018;
                 break;
             }
 
-                        case 0xE0: { // LDH (n), A
+            case 0xE0: { // LDH (n), A
                 uint8_t offset = cpu.memory[cpu.pc + 1];
                 cpu.memory[0xFF00 + offset] = cpu.registers.a;
                 INCR(2);
             }
 
-                        case 0xE1: { // POP HL
+            case 0xE1: { // POP HL
                 cpu.registers.hl = stack_pop16(&cpu);
                 INCR(1);
             }
 
-                        case 0xE2: { // LD (C), A
+            case 0xE2: { // LD (C), A
                 cpu.memory[0xFF00 + cpu.registers.c] = cpu.registers.a;
                 INCR(1);
             }
 
-                        case 0xE5: { // PUSH HL
+            case 0xE5: { // PUSH HL
                 stack_push16(&cpu, cpu.registers.hl);
                 INCR(1);
             }
 
-                        case 0xE6: { // AND n
+            case 0xE6: { // AND n
                 uint8_t value = cpu.memory[cpu.pc + 1];
                 cpu.registers.a &= value;
                 int z = (cpu.registers.a == 0);
@@ -601,13 +661,13 @@ int main() {
                 INCR(2);
             }
 
-                        case 0xE7: { // RST 20H
+            case 0xE7: { // RST 20H
                 stack_push16(&cpu, cpu.pc + 1);
                 cpu.pc = 0x0020;
                 break;
             }
 
-                        case 0xE8: { // ADD SP, e8
+            case 0xE8: { // ADD SP, e8
                 int8_t offset = (int8_t)cpu.memory[cpu.pc + 1];
                 uint16_t val = cpu.sp + offset;
                 int h = ((cpu.sp & 0xF) + (offset & 0xF)) > 0xF;
@@ -618,30 +678,30 @@ int main() {
                 INCR(2);
             }
 
-                        case 0xE9: { // JP HL
+            case 0xE9: { // JP HL
                 cpu.pc = cpu.registers.hl;
                 break;
             }
 
-                        case 0xEA: { // LD (nn), A
+            case 0xEA: { // LD (nn), A
                 uint16_t addr = read_16(&cpu, cpu.pc + 1);
                 cpu.memory[addr] = cpu.registers.a;
                 INCR(3);
             }
 
-                        case 0xEE: { // XOR n (Immediate)
+            case 0xEE: { // XOR n (Immediate)
                 uint8_t val = cpu.memory[cpu.pc + 1];
                 cpu_xor(&cpu, val);
                 INCR(2);
             }
 
-                        case 0xEF: { // RST 28H
+            case 0xEF: { // RST 28H
                 stack_push16(&cpu, cpu.pc + 1);
                 cpu.pc = 0x0028;
                 break;
             }
 
-                        case 0xF0: { // LDH A, (n)
+            case 0xF0: { // LDH A, (n)
                 uint8_t offset = cpu.memory[cpu.pc + 1];
                 if (offset == 0x44) {
                     cpu.registers.a = 0x94;
@@ -651,39 +711,39 @@ int main() {
                 INCR(2);
             }
 
-                        case 0xF1: { // POP AF
+            case 0xF1: { // POP AF
                 uint16_t af = stack_pop16(&cpu);
                 cpu.registers.af = af & 0xFFF0;
                 INCR(1);
             }
 
-                        case 0xF2: { // LD A, (C)
+            case 0xF2: { // LD A, (C)
                 cpu.registers.a = cpu.memory[0xFF00 + cpu.registers.c];
                 INCR(1);
             }
 
-                        case 0xF3: { // DI
+            case 0xF3: { // DI
                 INCR(1);
             }
 
-                        case 0xF5: { // PUSH AF
+            case 0xF5: { // PUSH AF
                 stack_push16(&cpu, cpu.registers.af);
                 INCR(1);
             }
 
-                        case 0xF6: { // OR n (Immediate)
+            case 0xF6: { // OR n (Immediate)
                 uint8_t val = cpu.memory[cpu.pc + 1];
                 cpu_or(&cpu, val);
                 INCR(2);
             }
 
-                        case 0xF7: { // RST 30H
+            case 0xF7: { // RST 30H
                 stack_push16(&cpu, cpu.pc + 1);
                 cpu.pc = 0x0030;
                 break;
             }
 
-                        case 0xF8: { // LD HL, SP+r8
+            case 0xF8: { // LD HL, SP+r8
                 int8_t offset = (int8_t)cpu.memory[cpu.pc + 1];
                 uint16_t val = cpu.sp + offset;
                 int h = ((cpu.sp & 0xF) + (offset & 0xF)) > 0xF;
@@ -693,23 +753,23 @@ int main() {
                 INCR(2);
             }
 
-                        case 0xF9: { // LD SP, HL
+            case 0xF9: { // LD SP, HL
                 cpu.sp = cpu.registers.hl;
                 INCR(1);
             }
 
-                        case 0xFA: { // LD A, (nn)
+            case 0xFA: { // LD A, (nn)
                 uint16_t addr = read_16(&cpu, cpu.pc + 1);
                 cpu.registers.a = cpu.memory[addr];
                 INCR(3);
             }
 
-                        case 0xFB: { // EI
+            case 0xFB: { // EI
                 cpu.ime_scheduled = 1;
                 INCR(1);
             }
 
-                        case 0xFE: { // CP n
+            case 0xFE: { // CP n
                 uint8_t value = cpu.memory[cpu.pc + 1];
                 uint8_t a = cpu.registers.a;
                 int z = (a == value);
@@ -720,9 +780,16 @@ int main() {
                 INCR(2);
             }
 
-            default:
+            case 0xFF: { // RST 38H
+                stack_push16(&cpu, cpu.pc + 1);
+                cpu.pc = 0x0038;
+                break;
+            }
+
+            default: {
                 printf("[!] Unknown : 0x%02X addr 0x%04X\n", opcode, cpu.pc);
                 exit(UNKNOWN_OPCODE);
+            }
         }
     }
     return SUCCESS;
