@@ -117,6 +117,11 @@ int main() {
 
                         case 0x15: cpu_dec(&cpu, &cpu.registers.d); INCR(1); // DEC D
 
+                        case 0x16: { // LD D, u8
+                cpu.registers.d = cpu.memory[cpu.pc + 1];
+                INCR(2);
+            }
+
             // MAIN OPCODES
         }
     }
