@@ -491,6 +491,11 @@ int main() {
                 break;
             }
 
+                        case 0xC5: { // PUSH BC
+                stack_push16(&cpu, cpu.registers.bc);
+                INCR(1);
+            }
+
             // MAIN OPCODES
         }
     }
