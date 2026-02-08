@@ -189,6 +189,22 @@ int main() {
                 INCR(2);
             }
 
+                        case 0x27: { // DAA
+                int a = cpu.registers.a;
+                if ((cpu.registers.f & FLAG_N) == 0) {
+                    if ((cpu.registers.f & FLAG_H) || (a & 0x0F) > 9) a += 0x06;
+                    if ((cpu.registers.f & FLAG_C) || a > 0x9F) { a += 0x60; cpu.registers.f |= FLAG_C; }
+                } else {
+                    if (cpu.registers.f & FLAG_H) a -= 0x06;
+                    if (cpu.registers.f & FLAG_C) a -= 0x60;
+                }
+                cpu.registers.a = (uint8_t)a;
+                if (cpu.registers.a == 0) cpu.registers.f |= FLAG_Z;
+                else cpu.registers.f &= ~FLAG_Z;
+                cpu.registers.f &= ~FLAG_H;
+                INCR(1);
+            }
+
             // MAIN OPCODES
         }
     }
