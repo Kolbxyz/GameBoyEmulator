@@ -469,6 +469,7 @@ int main() {
             // --- CP A, r (Compare) ---
                         case 0xB8: cpu_cp(&cpu, cpu.registers.b); INCR(1); // CP B
                         case 0xB9: cpu_cp(&cpu, cpu.registers.c); INCR(1); // CP C
+                        case 0xBA: cpu_cp(&cpu, cpu.registers.d); INCR(1); // CP D
             // MAIN OPCODES
         }
     }
