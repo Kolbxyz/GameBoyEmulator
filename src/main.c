@@ -513,6 +513,12 @@ int main() {
                 break;
             }
 
+                        case 0xCB: { // PREFIX CB
+                uint8_t cb_opcode = cpu.memory[cpu.pc + 1];
+                execute_cb_instruction(&cpu, cb_opcode);
+                INCR(2);
+            }
+
             // MAIN OPCODES
         }
     }
