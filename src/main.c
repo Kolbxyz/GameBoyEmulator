@@ -387,6 +387,9 @@ int main() {
                 cpu_adc(&cpu, val);
                 INCR(1);
             }
+                        case 0x8F: cpu_adc(&cpu, cpu.registers.a); INCR(1);
+
+            // --- SUB A, r (Subtract) ---
             // MAIN OPCODES
         }
     }
