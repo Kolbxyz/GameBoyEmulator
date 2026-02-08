@@ -278,6 +278,8 @@ int main() {
 
                         case 0x3B: cpu.sp--; INCR(1); // DEC SP
 
+                        case 0x3D: cpu_dec(&cpu, &cpu.registers.a); INCR(1); // DEC A
+
             // MAIN OPCODES
         }
     }
