@@ -60,6 +60,14 @@ int main() {
 
                         OP_LD_8(0x06, b) // LD B, u8
 
+                        case 0x07: { // RLCA (Rotate Left Circular Accumulator)
+                uint8_t a = cpu.registers.a;
+                uint8_t carry = (a >> 7);
+                cpu.registers.a = (a << 1) | carry;
+                cpu.registers.f = (0 << 7) | (0 << 6) | (0 << 5) | (carry << 4);
+                INCR(1);
+            }
+
             // MAIN OPCODES
         }
     }
