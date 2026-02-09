@@ -1,7 +1,7 @@
 #include "cpu.h"
 
 void cpu_inc(cpu_t *cpu, uint8_t *reg) {
-    uint8_t result = (*reg)++;
+    uint8_t result = ++(*reg);
     int z = (result == 0);
     int n = 0;
     int h = ((result & 0x0F) == 0x00);

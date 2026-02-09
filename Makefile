@@ -13,9 +13,16 @@ SRC =  	src/utils/throw_error.c	\
 		src/cpu/cpu_inc.c		\
 		src/cpu/cpu_cp.c		\
 		src/cpu/cpu_logical.c	\
+		src/cpu/cpu_srl.c		\
+		src/cpu/cpu_cb_funcs.c	\
 		src/cpu/stack.c			\
-		src/utils/read_8.c		\
-		src/utils/read_16.c		\
+		src/cpu/execute.c		\
+		src/vram.c				\
+		src/ppu.c				\
+		src/timer.c				\
+		src/apu.c				\
+		src/save.c				\
+		src/utils/memory_ops.c	\
 
 NAME = emulator
 
@@ -23,7 +30,7 @@ MAIN = src/main.c
 
 OBJ = $(SRC:.c=.o) $(MAIN:.c=.o)
 
-LIBS =
+LIBS = -lSDL2
 
 CC = clang
 

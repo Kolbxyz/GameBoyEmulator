@@ -17,9 +17,9 @@ void cpu_sub(cpu_t *cpu, uint8_t val) {
     int result = a - val;
 
     int z = ((result & 0xFF) == 0);
-    int n = 1; // Toujours 1 (Soustraction)
-    int h = ((a & 0x0F) < (val & 0x0F)); // Emprunt bit 4
-    int c = (a < val); // Emprunt bit 8
+    int n = 1;
+    int h = ((a & 0x0F) < (val & 0x0F));
+    int c = (a < val);
 
     cpu->registers.a = (uint8_t)result;
     cpu->registers.f = (z << 7) | (n << 6) | (h << 5) | (c << 4);
