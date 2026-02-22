@@ -38,19 +38,29 @@ typedef struct cpu_s {
     uint8_t ime_scheduled;
     uint8_t ime;
     uint8_t halted;
+    uint8_t halt_bug;
 
     uint8_t joypad_state;
+    int serial_timer;
+    uint16_t div_counter;
 
     // CGB support
     uint8_t cgb_mode;
-    uint8_t bg_palette_data[64];   // 8 palettes × 4 colors × 2 bytes
+    uint8_t bg_palette_data[64];
     uint8_t obj_palette_data[64];
-    uint8_t bcps;                  // BG palette index register
-    uint8_t ocps;                  // OBJ palette index register
-    uint8_t vram_bank;             // 0 or 1
-    uint8_t vram_banks[2][0x2000]; // 2 VRAM banks (bank 0 mirrors memory[0x8000])
-    uint8_t wram_bank;             // 1-7
-    uint8_t wram_banks[8][0x1000]; // 8 WRAM banks (bank 0 at 0xC000, 1-7 switchable at 0xD000)
+    uint8_t bcps;
+    uint8_t ocps;
+    uint8_t vram_bank;
+    uint8_t vram_banks[2][0x2000];
+    uint8_t wram_bank;
+    uint8_t wram_banks[8][0x1000];
+    uint8_t double_speed;
+    uint8_t speed_switch_armed;
+    uint8_t hdma_src_hi, hdma_src_lo;
+    uint8_t hdma_dst_hi, hdma_dst_lo;
+    uint8_t hdma_control;
+    uint8_t hdma_active;
+    uint16_t hdma_remaining;
 
     struct {
         union { struct { uint8_t f; uint8_t a; }; uint16_t af; };
@@ -104,6 +114,7 @@ void update_display(cpu_t *cpu);
 void update_input(cpu_t *cpu);
 
 void update_timers(cpu_t *cpu, int cycles);
+void hdma_hblank_tick(cpu_t *cpu);
 
 void stack_push16(cpu_t *cpu, uint16_t value);
 uint16_t stack_pop16(cpu_t *cpu);
@@ -111,6 +122,7 @@ uint16_t stack_pop16(cpu_t *cpu);
 void init_apu(void);
 void update_audio(int cycles);
 void apu_write(cpu_t *cpu, uint16_t addr, uint8_t val);
+uint8_t apu_read(uint16_t addr);
 void cleanup_apu(void);
 
 void init_save(const char *rom_path, cpu_t *cpu);
