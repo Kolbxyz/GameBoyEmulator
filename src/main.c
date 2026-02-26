@@ -47,7 +47,7 @@ uint8_t get_turbo(void) { return turbo_mode; }
 int main(int argc, char **argv)
 {
     cpu_t cpu = {0};
-    char *path = (argc > 1) ? argv[1] : "./assets/test.gb";
+    char *path = (argc > 1) ? argv[1] : "./assets/pokemongold.gbc";
 
     read_rom(path, &cpu);
     init_cpu(&cpu);
@@ -76,17 +76,20 @@ int main(int argc, char **argv)
         int c = 4;
 
         if (cpu.halted) {
-            if (read_8(&cpu, 0xFF0F) & read_8(&cpu, 0xFFFF)) {
+            if (read_8(&cpu, 0xFF0F) & read_8(&cpu, 0xFFFF))
                 cpu.halted = 0;
-                cpu.pc++;
-            }
         } else {
             c = execute_instruction(&cpu);
+            if (cpu.halt_bug) {
+                cpu.pc--;
+                cpu.halt_bug = 0;
+            }
         }
 
         update_timers(&cpu, c);
-        update_graphics(&cpu, c);
-        update_audio(c);
+        int gpu_cycles = cpu.double_speed ? c / 2 : c;
+        update_graphics(&cpu, gpu_cycles);
+        update_audio(gpu_cycles);
         handle_interrupts(&cpu);
 
         uint8_t ly = read_8(&cpu, 0xFF44);

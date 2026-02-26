@@ -1,38 +1,44 @@
 #include "cpu.h"
 
-/*
-** Game Boy Timers Implementation
-** DIV (0xFF04): Increments at 16384 Hz (every 256 cycles)
-** TIMA (0xFF05): Main timer, increments based on TAC frequency
-** TMA (0xFF06): Value loaded into TIMA when it overflows
-** TAC (0xFF07): Timer Control (Bit 2: Enable, Bits 0-1: Frequency)
-*/
 void update_timers(cpu_t *cpu, int cycles)
 {
-    static uint16_t div_counter = 0;
-    uint16_t prev_div = div_counter;
-    div_counter += cycles;
-
-    cpu->memory[0xFF04] = (div_counter >> 8);
-
     uint8_t tac = cpu->memory[0xFF07];
     if (tac & 0x04) {
-        int bit = 9; // 4096 Hz
-        switch (tac & 0x03) {
-            case 0x01: bit = 3; break; // 262144 Hz
-            case 0x02: bit = 5; break; // 65536 Hz
-            case 0x03: bit = 7; break; // 16384 Hz
-        }
+        static const int bit_table[] = {9, 3, 5, 7};
+        int bit = bit_table[tac & 0x03];
+        uint16_t prev = cpu->div_counter;
+        uint16_t next = prev + (uint16_t)cycles;
 
-        // Increment TIMA on falling edge of selected bit
-        if (((prev_div >> bit) & 0x01) && !((div_counter >> bit) & 0x01)) {
-            if (read_8(cpu, 0xFF05) == 0xFF) {
-                write_8(cpu, 0xFF05, read_8(cpu, 0xFF06));
-                write_8(cpu, 0xFF0F, read_8(cpu, 0xFF0F) | 0x04);
-                // printf("[TIMER] Overflow! Interrupt triggered.\n");
+        /* Count falling edges of the selected bit in [prev+1, next] */
+        int edges;
+        if (next >= prev) {
+            edges = (next >> (bit + 1)) - (prev >> (bit + 1));
+        } else {
+            /* uint16_t wraparound */
+            edges = ((0x10000 >> (bit + 1)) - (prev >> (bit + 1)))
+                  + (next >> (bit + 1));
+        }
+        for (int i = 0; i < edges; i++) {
+            uint8_t tima = cpu->memory[0xFF05];
+            if (tima == 0xFF) {
+                cpu->memory[0xFF05] = cpu->memory[0xFF06];
+                cpu->memory[0xFF0F] |= 0x04;
             } else {
-                write_8(cpu, 0xFF05, read_8(cpu, 0xFF05) + 1);
+                cpu->memory[0xFF05] = tima + 1;
             }
+        }
+    }
+
+    cpu->div_counter += cycles;
+    cpu->memory[0xFF04] = (cpu->div_counter >> 8);
+
+    if (cpu->serial_timer > 0) {
+        cpu->serial_timer -= cycles;
+        if (cpu->serial_timer <= 0) {
+            cpu->serial_timer = 0;
+            cpu->memory[0xFF02] &= 0x7F;
+            cpu->memory[0xFF01] = 0xFF;
+            cpu->memory[0xFF0F] |= 0x08;
         }
     }
 }

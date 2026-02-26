@@ -75,7 +75,12 @@ int execute_instruction(cpu_t *cpu)
     }
 
     // -- 0x10-0x1F --
-    case 0x10: cpu->pc += 2; break;
+    case 0x10:
+        if (cpu->cgb_mode && cpu->speed_switch_armed) {
+            cpu->double_speed ^= 1;
+            cpu->speed_switch_armed = 0;
+        }
+        cpu->pc += 2; break;
     case 0x11: cpu->registers.de = read_16(cpu, cpu->pc + 1); cpu->pc += 3; c = 12; break;
     case 0x12: write_8(cpu, cpu->registers.de, cpu->registers.a); cpu->pc++; c = 8; break;
     case 0x13: cpu->registers.de++; cpu->pc++; c = 8; break;
@@ -196,7 +201,13 @@ int execute_instruction(cpu_t *cpu)
         else              { *r[d] = *r[s]; }
         cpu->pc++; break;
     }
-    case 0x76: cpu->halted = 1; break;
+    case 0x76:
+        cpu->pc++;
+        if (!cpu->ime && (read_8(cpu, 0xFF0F) & read_8(cpu, 0xFFFF)))
+            cpu->halt_bug = 1; // HALT bug: next opcode read twice
+        else
+            cpu->halted = 1;
+        break;
 
     // -- 0x80-0xBF: ALU ops --
     case 0x80 ... 0xBF: {

@@ -284,6 +284,7 @@ void update_graphics(cpu_t *cpu, int cycles)
         if (new_mode == 0 && (stat & 0x08)) write_8(cpu, 0xFF0F, read_8(cpu, 0xFF0F) | 0x02);
         if (new_mode == 1 && (stat & 0x10)) write_8(cpu, 0xFF0F, read_8(cpu, 0xFF0F) | 0x02);
         if (new_mode == 2 && (stat & 0x20)) write_8(cpu, 0xFF0F, read_8(cpu, 0xFF0F) | 0x02);
+        if (new_mode == 0) hdma_hblank_tick(cpu);
     }
 
     stat = (stat & ~0x03) | new_mode;

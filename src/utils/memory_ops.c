@@ -1,4 +1,5 @@
 #include "cpu.h"
+#include <stdio.h>
 
 uint8_t read_8(cpu_t *cpu, uint16_t address)
 {
@@ -75,7 +76,13 @@ uint8_t read_8(cpu_t *cpu, uint16_t address)
         if (address == 0xFF6B) return cpu->obj_palette_data[cpu->ocps & 0x3F];
         if (address == 0xFF4F) return cpu->vram_bank | 0xFE;
         if (address == 0xFF70) return cpu->wram_bank;
+        if (address == 0xFF4D) return (cpu->double_speed << 7) | cpu->speed_switch_armed;
+        if (address == 0xFF55) return cpu->hdma_active ? (cpu->hdma_remaining / 16 - 1) : 0xFF;
     }
+
+    // APU register reads
+    if (address >= 0xFF10 && address <= 0xFF3F)
+        return apu_read(address);
 
     return cpu->memory[address];
 }
@@ -181,22 +188,59 @@ void write_8(cpu_t *cpu, uint16_t address, uint8_t value)
             if (cpu->wram_bank == 0) cpu->wram_bank = 1;
             return;
         }
+        if (address == 0xFF4D) {
+            cpu->speed_switch_armed = value & 0x01;
+            return;
+        }
+        // HDMA registers
+        if (address == 0xFF51) { cpu->hdma_src_hi = value; return; }
+        if (address == 0xFF52) { cpu->hdma_src_lo = value & 0xF0; return; }
+        if (address == 0xFF53) { cpu->hdma_dst_hi = value & 0x1F; return; }
+        if (address == 0xFF54) { cpu->hdma_dst_lo = value & 0xF0; return; }
+        if (address == 0xFF55) {
+            if (cpu->hdma_active && !(value & 0x80)) {
+                cpu->hdma_active = 0;
+            } else {
+                uint16_t src = (cpu->hdma_src_hi << 8) | cpu->hdma_src_lo;
+                uint16_t dst = 0x8000 | ((cpu->hdma_dst_hi << 8) | cpu->hdma_dst_lo);
+                uint16_t len = ((value & 0x7F) + 1) * 16;
+                if (value & 0x80) {
+                    // HDMA (HBlank DMA) — transfer 16 bytes per HBlank
+                    cpu->hdma_active = 1;
+                    cpu->hdma_remaining = len;
+                } else {
+                    // GDMA — immediate transfer
+                    for (uint16_t i = 0; i < len; i++)
+                        write_8(cpu, dst + i, read_8(cpu, src + i));
+                    cpu->hdma_src_hi = (src + len) >> 8;
+                    cpu->hdma_src_lo = (src + len) & 0xF0;
+                    cpu->hdma_dst_hi = ((dst + len) >> 8) & 0x1F;
+                    cpu->hdma_dst_lo = (dst + len) & 0xF0;
+                    cpu->hdma_active = 0;
+                }
+            }
+            return;
+        }
     }
 
     if (address == 0xFF02) {
-        if (value == 0x81)
-            cpu->memory[0xFF0F] |= 0x08;
+        if (value == 0x81) {
+            putchar(cpu->memory[0xFF01]);
+            fflush(stdout);
+            cpu->serial_timer = 4096;
+        }
         cpu->memory[0xFF02] = value;
         return;
     }
 
     if (address == 0xFF04) {
+        cpu->div_counter = 0;
         cpu->memory[0xFF04] = 0;
         return;
     }
 
-    // APU registers
-    if (address >= 0xFF10 && address <= 0xFF26) {
+    // APU registers + wave RAM
+    if ((address >= 0xFF10 && address <= 0xFF26) || (address >= 0xFF30 && address <= 0xFF3F)) {
         cpu->memory[address] = value;
         apu_write(cpu, address, value);
         return;
@@ -214,4 +258,23 @@ void write_16(cpu_t *cpu, uint16_t address, uint16_t value)
 {
     write_8(cpu, address, value & 0xFF);
     write_8(cpu, address + 1, value >> 8);
+}
+
+void hdma_hblank_tick(cpu_t *cpu)
+{
+    if (!cpu->cgb_mode || !cpu->hdma_active || cpu->hdma_remaining == 0)
+        return;
+    uint16_t src = (cpu->hdma_src_hi << 8) | cpu->hdma_src_lo;
+    uint16_t dst = 0x8000 | ((cpu->hdma_dst_hi << 8) | cpu->hdma_dst_lo);
+    for (int i = 0; i < 16; i++)
+        write_8(cpu, dst + i, read_8(cpu, src + i));
+    src += 16;
+    dst += 16;
+    cpu->hdma_src_hi = src >> 8;
+    cpu->hdma_src_lo = src & 0xF0;
+    cpu->hdma_dst_hi = (dst >> 8) & 0x1F;
+    cpu->hdma_dst_lo = dst & 0xF0;
+    cpu->hdma_remaining -= 16;
+    if (cpu->hdma_remaining == 0)
+        cpu->hdma_active = 0;
 }
