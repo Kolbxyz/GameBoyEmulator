@@ -5,24 +5,7 @@
 ## Makefile
 ##
 
-SRC =  	src/utils/throw_error.c	\
-		src/memory/read_rom.c	\
-		src/cpu/cpu_add.c		\
-		src/cpu/cpu_dec.c		\
-		src/cpu/cpu_sub.c		\
-		src/cpu/cpu_inc.c		\
-		src/cpu/cpu_cp.c		\
-		src/cpu/cpu_logical.c	\
-		src/cpu/cpu_srl.c		\
-		src/cpu/cpu_cb_funcs.c	\
-		src/cpu/stack.c			\
-		src/cpu/execute.c		\
-		src/vram.c				\
-		src/ppu.c				\
-		src/timer.c				\
-		src/apu.c				\
-		src/save.c				\
-		src/utils/memory_ops.c	\
+SRC =  	src/utils/throw_error.c
 
 NAME = emulator
 
